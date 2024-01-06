@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{inc/layout.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>Cream</title>
+</head>
+<body>
+메인화면
+<th:block th:if="${#authentication.principal != 'anonymousUser'}" th:text="${#authentication.principal}">
+
+</th:block>
+</body>
+</html>

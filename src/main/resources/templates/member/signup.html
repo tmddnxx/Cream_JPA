@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{inc/layout.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>Cream SingUp</title>
+</head>
+<style layout:fragment="style">
+    .signUp_area{
+        width: 400px;
+        margin: 0 auto;
+        padding: 58px 0 160px;
+    }
+    .singUp-title{
+        color: #000;
+        font-size: 32px;
+        font-weight: 800;
+        letter-spacing: -.48px;
+        padding-bottom: 46px;
+        text-align: center;
+    }
+    input{
+        height: 38px;
+        font-size: 15px;
+        letter-spacing: -.15px;
+        line-height: 22px;
+        width: 100%;
+        padding: 8px 0;
+        background-color: transparent !important;
+        border: none;
+        outline: none;
+    }
+    .input-box{
+        padding: 10px 0 14px;
+    }
+    .input-title{
+        font-weight: 900;
+        font-size: 14px;
+        position: relative;
+        display: inline-block;
+        padding-right: 6px;
+    }
+    .input-title:after{
+        content: "*";
+        position: absolute;
+        right: 0;
+        top: -2px;
+    }
+    .input-login{
+        border-bottom: 1px solid #ebebeb;
+    }
+    .input-login:focus{
+        border-bottom: 2px solid black !important;
+    }
+    .btn_box{
+        padding-top: 20px;
+    }
+    .signup_btn{
+        background-color: #ebebeb;
+        border-radius: 12px;
+        border: none;
+        color: #fff;
+        font-size: 16px;
+        font-weight: 700;
+        width: 100%;
+        height: 52px;
+        letter-spacing: -.16px;
+    }
+    .solid{
+        background-color: #222222;
+        color: #fff;
+        font-weight: 700;
+    }
+    .signUp_terms{
+        padding: 20px 0 40px;
+    }
+    .terms_box:nth-child(1){
+        margin-bottom: 20px;
+    }
+    .check_main{
+        display: flex;
+        height: 24px;
+        position: relative;
+    }
+    .signUp_terms .check_main .check_item{
+        width: calc(100% - 40px);
+    }
+    .check_item{
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        position: relative;
+    }
+    input[type=checkbox]{
+        width: 24px;
+        height: 24px;
+        background-color: #fff;
+        border-color: #ebebeb;
+    }
+    .check_main .check_item label span{
+        font-size: 14px;
+        font-weight: 600;
+        letter-spacing: -.21px;
+        line-height: 24px;
+    }
+    .check_sub{
+        padding: 8px 0 0 36px;
+    }
+    .check_sub .check_item label span{
+        font-size: 13px;
+    }
+    .check_sub .check_item a {
+        text-decoration: underline;
+        font-size: 12px;
+        color: rgba(34,34,34,.5);
+        letter-spacing: -.18px;
+        line-height: 20px;
+        position: absolute;
+        right: 0;
+        top: 2px;
+    }
+    .plusBtn{
+        position: absolute;
+        right: 0;
+        top: -20px;
+        font-size: 25pt;
+        font-weight: 600;
+        background-color: transparent;
+        border: none;
+        outline: none;
+    }
+</style>
+<body>
+    <div layout:fragment="content">
+        <div class="signUp_area">
+            <h1 class="singUp-title">회원가입</h1>
+
+            <form action="/member/signup" method="post" name="signUpFrm">
+                <div class="input-box">
+                    <h6 class="input-title">아이디</h6>
+                    <input class="input-login" id="memberId" type="text" name="memberId" placeholder="Cream" autocomplete="off" required>
+                </div>
+                <div class="input-box">
+                    <h6 class="input-title">비밀번호</h6>
+                    <input class="input-login" id="passwd" type="password" name="passwd" placeholder="영문, 숫자, 특수문자 조합 8-16자" autocomplete="off" required>
+                </div>
+                <div class="input-box">
+                    <h6 class="input-title">닉네임</h6>
+                    <input class="input-login" id="nickname" type="text" name="nickname" placeholder="닉네임을 입력하세요" autocomplete="off" required>
+                </div>
+                <div class="input-box">
+                    <h6 class="input-title">이메일</h6>
+                    <input class="input-login" id="email" type="email" name="email" placeholder="예) cream@cream.co.kr" autocomplete="off" required>
+                </div>
+            </form>
+            <div class="signUp_terms">
+                <div class="terms_box">
+                    <div class="check_main">
+                        <div class="check_item">
+                            <input type="checkbox" id="checkbox1">
+                            <label for="checkbox1"><span>[필수] 만 14세 이상이며 모두 동의합니다.</span></label>
+                        </div>
+                        <button type="button" class="plusBtn">+</button>
+                    </div>
+                    <div class="check_sub">
+                        <div class="check_item">
+                            <input type="checkbox" id="check1_agree">
+                            <label for="check1_agree"><span>이용약관 동의</span></label>
+                            <a href="#" class="btn_view">내용 보기</a>
+                        </div>
+                        <div class="check_item">
+                            <input type="checkbox" id="check1_privacy">
+                            <label for="check1_privacy"><span>개인정보 수칩 및 이용동의</span></label>
+                            <a href="#" class="btn_view">내용 보기</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="terms_box">
+                    <div class="check_main">
+                        <div class="check_item">
+                            <input type="checkbox" id="checkbox2">
+                            <label for="checkbox2"><span>[선택] 광고성 정보 수신에 모두 동의합니다</span></label>
+                        </div>
+                        <button type="button" class="plusBtn">+</button>
+                    </div>
+                    <div class="check_sub">
+                        <div class="check_item">
+                            <input type="checkbox" id="appPush">
+                            <label for="appPush"><span>앱 푸시</span></label>
+                        </div>
+                        <div class="check_item">
+                            <input type="checkbox" id="SMS">
+                            <label for="SMS"><span>문자 메시지</span></label>
+                        </div>
+                        <div class="check_item">
+                            <input type="checkbox" id="email_allow">
+                            <label for="email_allow"><span>이메일</span></label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="btn_box">
+                <button type="button" class="signup_btn">회원가입</button>
+            </div>
+        </div>
+    </div>
+</body>
+<script layout:fragment="script" th:inline="javascript">
+    const signUpBtn = document.querySelector('.signup_btn');
+    const signUpFrm = document.querySelector('form[name=signUpFrm]')
+    signUpBtn.addEventListener('click', function (){
+        signUpFrm.submit();
+    })
+</script>
+</html>
