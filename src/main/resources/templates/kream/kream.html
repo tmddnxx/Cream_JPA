@@ -7,9 +7,10 @@
     <title>Cream</title>
 </head>
 <body>
-메인화면
-<th:block th:if="${#authentication.principal != 'anonymousUser'}" th:text="${#authentication.principal}">
+<div layout:fragment="content">
+    <th:block th:if="${#authentication.principal != 'anonymousUser'}" th:text="${#authentication.principal}">
+    </th:block>
 
-</th:block>
+</div>
 </body>
 </html>

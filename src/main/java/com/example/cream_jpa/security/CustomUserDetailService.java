@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -27,23 +28,21 @@ public class CustomUserDetailService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Member member = memberRepository.findByMemberId(username); // view에서 전달받은 username(memberId)으로 회원 정보찾기
+        Optional<Member> member = memberRepository.findByMemberId(username); // view에서 전달받은 username(memberId)으로 회원 정보찾기
 
         if(member == null){
             throw new UsernameNotFoundException("회원 정보가 없습니다");
         }
 
-        return member;
+        // vo에는 없는 authorities 임의로 생성해서 값 넣어서 memberDTO에 저장
+        // 나는 역할을 하나만 사용할 것이기 때문에 기본 값인 user로 넣음
+        List<SimpleGrantedAuthority> authorities = Arrays.asList(new SimpleGrantedAuthority("user"));
 
-//        // vo에는 없는 authorities 임의로 생성해서 값 넣어서 memberDTO에 저장
-//        // 나는 역할을 하나만 사용할 것이기 때문에 기본 값인 user로 넣음
-//        List<SimpleGrantedAuthority> authorities = Arrays.asList(new SimpleGrantedAuthority("user"));
-//
-//        // memberDTO에 저장해서 세션에 띄움 // view에서 사용가능함
-//        Member actualMember = member.get(); // Optional에 있는 값 꺼낼때 .get() 사용
-//        return new MemberDTO(actualMember.getMno(), actualMember.getMemberId(), actualMember.getPasswd(),
-//                actualMember.getNickname(), actualMember.getRole(), actualMember.getRole(),
-//                authorities);
+        // memberDTO에 저장해서 세션에 띄움 // view에서 사용가능함
+        Member actualMember = member.get();
+        return new MemberDTO(actualMember.getMno(), actualMember.getMemberId(), actualMember.getPasswd(),
+                actualMember.getNickname(), actualMember.getEmail(), actualMember.getRole(), authorities);
+
     }
 
     @Bean // 비밀번호 암호화

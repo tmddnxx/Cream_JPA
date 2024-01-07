@@ -1,4 +1,4 @@
-package com.example.cream__jpa;
+package com.example.cream_jpa;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

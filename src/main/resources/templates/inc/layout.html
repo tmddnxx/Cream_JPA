@@ -160,7 +160,7 @@
                 <ul class="top-list d-flex ">
                     <li th:if="${#authentication.principal == 'anonymousUser'}" class="top-item"><a href="/login">로그인</a></li>
                     <li th:unless="${#authentication.principal == 'anonymousUser'}" class="top-item"><a href="/logout">로그아웃</a></li>
-                    <li class="top-item"><a href="/member/signup">회원가입</a></li>
+                    <li th:if="${#authentication.principal == 'anonymousUser'}" class="top-item"><a href="/member/signup">회원가입</a></li>
                 </ul>
             </div>
         </div>

@@ -10,6 +10,6 @@ import java.util.Optional;
 public interface MemberRepository extends JpaRepository<Member, Long> {
 
     Member save(Member member); // 회원가입
-    Member findByMemberId(String memberId); // 아이디로 회원찾기 (Optional 사용 이유 = null값 방지)
+    Optional<Member> findByMemberId(String memberId); // 아이디로 회원찾기 (Optional 사용 이유 = null값 방지)
 
 }

@@ -22,11 +22,9 @@ public class MemberServiceImpl implements MemberService{
     }
 
     @Override
-    public Member getMemberByMemberId(String memberId) { // ID로 회원찾기
+    public Optional<Member> getMemberByMemberId(String memberId) { // ID로 회원찾기
 
         return memberRepository.findByMemberId(memberId);
     }
-
-
 
 }
