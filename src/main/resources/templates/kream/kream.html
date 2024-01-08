@@ -6,11 +6,100 @@
     <meta charset="UTF-8">
     <title>Cream</title>
 </head>
+<style layout:fragment="style">
+    .shop_area{
+        margin: 40px 0;
+    }
+    .productList{
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-gap: 20px;
+    }
+    .card-body{
+        width: 350px;
+        min-height: 241px;
+        max-height: 300px;
+        background-color: rgb(235, 240, 245);
+        border-radius: 8px;
+        border: 1px solid #e9ebee;
+        box-shadow: 0 8px 18px -5px rgba(23, 39, 75, .05);
+        transition: transform .2s ease-in-out;
+        cursor: pointer;
+    }
+    .card-body:hover{
+        transform: translate(-5px, -5px);
+    }
+    .pagination {
+        display: flex;
+        justify-content: center;
+        margin-top: 40px;
+    }
+
+    .pagination ul {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .pagination li {
+        display: inline-block;
+        margin-right: 5px;
+    }
+
+    .pagination a {
+        text-decoration: none;
+        padding: 8px 12px;
+        border: 1px solid #ccc;
+        color: #333;
+    }
+
+    .pagination .active {
+        background-color: #007bff;
+        color: #fff;
+        border: 1px solid #007bff;
+    }
+
+    .pagination a:hover {
+        background-color: #ddd;
+    }
+</style>
 <body>
 <div layout:fragment="content">
-    <th:block th:if="${#authentication.principal != 'anonymousUser'}" th:text="${#authentication.principal}">
+    <th:block th:if="${#authentication.principal != 'anonymousUser'}">
+        <span th:text="${#authentication.principal}"></span>
+        <a href="/kream/register">상품등록</a>
     </th:block>
+    <div class="shop_area">
+        <h1 class="text-center">SHOP</h1>
+        <!--    상품 목록-->
+        <div class="productList w-75">
+            <div class="card-body" th:each="list:${productList}">
+                <a th:href="@{/kream/view(pno=${list.pno})}">
+                    <div class="card-top text-center">
+                        <img src="https://image-cdn.hypb.st/https%3A%2F%2Fkr.hypebeast.com%2Ffiles%2F2022%2F01%2FNike-air-force-1-flax-official-release-info-ft.jpg?" width="200">
+                    </div>
+                    <div class="card-bottom">
+                        <h3 class="title text-center" th:text="${list.productName}"></h3>
+                        <div class="card_price">
+                            <div class="d-flex gap-5 justify-content-end">
+                                <h5>즉시 구매가</h5>
+                                <h5 th:text="${#numbers.formatDecimal(list.price, 0, 'COMMA', 0, 'POINT')} + '원'"></h5>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
 
+        <!-- 페이징 -->
+        <div th:if="${productList.totalPages >= 1}" class="pagination">
+            <ul>
+                <li th:each="i : ${#numbers.sequence(1, productList.totalPages)}">
+                    <a th:href="@{/kream(page=${i})}" th:text="${i}" th:class="${i == productList.number+1 ? 'active' : ''}"></a>
+                </li>
+            </ul>
+        </div>
+    </div>
 </div>
 </body>
 </html>

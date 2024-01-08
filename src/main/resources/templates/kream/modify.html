@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{inc/layout.html}">
+<head>
+  <meta charset="UTF-8">
+  <title>Product Modify</title>
+</head>
+<style layout:fragment="style">
+  body{
+    background-color: #e2e3e5;
+  }
+  .register_area{
+    background-color: #ffffff;
+    width: 60%;
+    margin: 0 auto;
+  }
+  .area-inner{
+    padding: 10px;
+    margin-top: 20px;
+    margin-bottom: 50px;
+    min-height: 784px;
+  }
+  .register-title{
+    color: #000;
+    font-size: 32px;
+    font-weight: 800;
+    letter-spacing: -.48px;
+    padding-bottom: 46px;
+    text-align: center;
+  }
+  input{
+    height: 38px;
+    font-size: 15px;
+    letter-spacing: -.15px;
+    line-height: 22px;
+    width: 90%;
+    padding: 8px 0;
+    background-color: transparent !important;
+    border: none;
+    outline: none;
+  }
+  .input-box{
+    display: flex;
+    flex-direction: column;
+    padding: 10px 0 14px;
+    margin-left: 20px;
+  }
+  .input-title{
+    font-weight: 900;
+    font-size: 14px;
+    position: relative;
+    display: inline-block;
+    padding-right: 6px;
+  }
+  .input-product{
+    margin: 0;
+    border-bottom: 1px solid #ebebeb;
+  }
+  .input-product:focus{
+    border-bottom: 2px solid black !important;
+  }
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  .name{
+    text-align: center;
+  }
+  .price{
+    text-align: end;
+  }
+  .regiBtn{
+    background-color: #222222;
+    border-radius: 12px;
+    border: none;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 700;
+    width: 100%;
+    height: 52px;
+    letter-spacing: -.16px;
+  }
+</style>
+<body>
+<div layout:fragment="content">
+  <div class="register_area">
+    <div class="area-inner">
+      <h1 class="register-title">상품 수정</h1>
+      <form action="/kream/modify" method="post" name="registerFrm">
+        <input type="hidden" name="mno" th:value="${#authentication.principal.mno}">
+        <input type="hidden" name="pno" th:value="${productDTO.pno}">
+        <div class="input-box">
+          <h6 class="input-title">이미지</h6>
+          <input type="file">
+        </div>
+        <div class="input-box">
+          <h6 class="input-title">상품이름</h6>
+          <input type="text" name="productName" class="input-product name" autocomplete="off" th:value="${productDTO.productName}">
+        </div>
+        <div class="input-box">
+          <h6 class="input-title">상품가격</h6>
+          <div class="d-flex">
+            <input type="text" name="price" class="input-product price" maxlength="13" autocomplete="off" placeholder="판매희망가" th:value="${productDTO.price}">
+            <h5>원</h5>
+          </div>
+        </div>
+        <div>
+          <button type="submit" class="regiBtn" onclick="priceValue()">상품 등록</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+</body>
+<script layout:fragment="script" th:inline="javascript">
+
+  // 가격에 콤마달기, 문자입력안되게
+  const price = document.querySelector('.price');
+  price.addEventListener('keyup', function (e){
+    let value = e.target.value;
+
+    // 숫자만 허용하도록 검사
+    if (isNaN(value)) {
+      // 숫자가 아니면 입력을 취소하고 함수를 종료
+      e.target.value = value.replace(/[^\d]/g, '');
+      return;
+    }
+
+    value = Number(value.replaceAll(',', ''));
+    const formatValue = value.toLocaleString('ko-KR');
+    price.value = formatValue;
+  })
+  // submit할때 콤마(,)빼고 전달하기
+  function priceValue(){
+    price.value = Number(price.value.replace(/,/g, ''));
+  }
+
+</script>
+</html>

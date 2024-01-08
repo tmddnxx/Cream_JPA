@@ -11,18 +11,18 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Product {
+public class Sales_bid {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long pno; // 고유번호 PK , 상품코드
+    private Long sbNo; // PK값
 
     @Column(nullable = false)
-    private Long mno; // 초기판매자의 고유번호
+    private String pno; // 상품코드
 
     @Column(nullable = false)
-    private String productName; // 상품이름
+    private Long mno; // 판매자 고유번호
 
     @Column(nullable = false)
-    private int price; // 판매자 초기설정 가격
+    private int salesPrice; // 판매입찰가
 }

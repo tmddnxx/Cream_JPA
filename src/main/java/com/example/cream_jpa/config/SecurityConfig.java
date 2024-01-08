@@ -23,6 +23,7 @@ public class SecurityConfig {
                 // 인증 필요한 url
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.GET, "/kream/register").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/kream/modify").authenticated()
                         .anyRequest()
                         .permitAll()
                 )
