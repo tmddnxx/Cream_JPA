@@ -1,14 +1,17 @@
 package com.example.cream_jpa.kream.entity;
 
+import com.example.cream_jpa.kream.dto.ProductDTO;
+import com.example.cream_jpa.kream.repository.ProductRepository;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.OptionalInt;
 
 @Entity
 @Getter
-@Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Product {
@@ -17,12 +20,25 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long pno; // 고유번호 PK , 상품코드
 
-    @Column(nullable = false)
-    private Long mno; // 초기판매자의 고유번호
 
     @Column(nullable = false)
     private String productName; // 상품이름
 
-    @Column(nullable = false)
-    private int price; // 판매자 초기설정 가격
+
+    @OneToMany(mappedBy = "product")
+    private List<Sales_bid> sales_bids = new ArrayList<>();
+
+    @OneToMany(mappedBy = "product")
+    private List<Purchase_bid> purchase_bids = new ArrayList<>();
+
+    public ProductDTO toDTO() {
+        ProductDTO productDTO = new ProductDTO();
+        productDTO.setProductName(this.productName);
+        productDTO.setPno(this.pno);
+        return productDTO;
+    }
+
+    public void ChangeName(String productName){
+        this.productName = productName;
+    }
 }

@@ -1,11 +1,14 @@
 package com.example.cream_jpa.kream.dto;
 
 import com.example.cream_jpa.kream.entity.Product;
+import com.example.cream_jpa.kream.entity.Sales_bid;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProductDTO {
@@ -20,15 +23,14 @@ public class ProductDTO {
     private int price; // 판매자 초기설정 가격
 
     public Product toEntity(){
-        Product product = new Product();
-        product.setMno(this.mno);
-        product.setProductName(this.productName);
-        product.setPrice(this.price);
+        Product product = Product.builder()
+                .pno(this.pno)
+                .productName(this.productName)
+                .build();
+
 
         return product;
     }
 
-    public static ProductDTO toDTO(Product product) {
-        return new ProductDTO(product.getPno(), product.getMno(), product.getProductName(), product.getPrice());
-    }
+
 }

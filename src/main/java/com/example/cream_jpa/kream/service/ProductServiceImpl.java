@@ -2,11 +2,17 @@ package com.example.cream_jpa.kream.service;
 
 import com.example.cream_jpa.kream.dto.ProductDTO;
 import com.example.cream_jpa.kream.entity.Product;
+import com.example.cream_jpa.kream.entity.Sales_bid;
 import com.example.cream_jpa.kream.repository.ProductRepository;
+import com.example.cream_jpa.kream.repository.SalesBidRepository;
+import com.example.cream_jpa.kream.repository.queryDSL.QueryRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -16,13 +22,23 @@ import java.util.stream.Collectors;
 public class ProductServiceImpl implements ProductService{
 
     private final ProductRepository productRepository;
+    private final SalesBidRepository salesBidRepository;
 
 
     @Override
+    @Transactional
     public void register(ProductDTO productDTO) { // 상품등록
+        // ProductDTO를 이용하여 Product 엔티티 생성
         Product product = productDTO.toEntity();
-        
+
+        // Product 엔티티 저장
         productRepository.save(product);
+
+        // Sales_bid 엔티티 생성 및 설정
+        Sales_bid salesBid = new Sales_bid(0L,productDTO.getMno(),productDTO.getPrice(), product);
+
+        // Sales_bid 엔티티 저장
+        salesBidRepository.save(salesBid);
     }
 
     @Override
@@ -39,11 +55,15 @@ public class ProductServiceImpl implements ProductService{
         // 조회된 엔터티 목록을 ProductDTO로 변환합니다.
         // getContent - Page에 포함된 엔티티목록가져오는메서드
         // stream - 순차 및 병렬처리
-        // map - ProductDTO의 toDTO메서드를 참조해서 각각의 엔티티를 DTO로 변환함
+        // map - Product의 toDTO메서드를 참조해서 각각의 엔티티를 DTO로 변환함
         // collect - 스트림의 각 요소를 리스트로 수집
         //Collectors.toList - 리스트로 변환
         List<ProductDTO> productDTOList = productPage.getContent().stream()
-                .map(ProductDTO::toDTO)
+                .map(product -> {
+                    ProductDTO productDTO = product.toDTO();
+                    productDTO.setPrice(productRepository.getMinPrice(product.getPno()));
+                    return productDTO;
+                })
                 .collect(Collectors.toList());
 
         // ProductDTO 목록과 페이지 정보를 사용하여 새로운 Page<ProductDTO>를 생성합니다.
@@ -55,8 +75,11 @@ public class ProductServiceImpl implements ProductService{
     @Override
     public Optional<ProductDTO> getOne(Long pno) { // 상품상세
         Optional<Product> product = productRepository.findById(pno);
-
-        return product.map(ProductDTO::toDTO);
+        ProductDTO productDTO = new ProductDTO();
+        productDTO.setPno(product.get().getPno());
+        productDTO.setProductName(product.get().getProductName());
+        productDTO.setPrice(productRepository.getMinPrice(product.get().getPno()));
+        return Optional.of(productDTO);
     }
 
     @Override
@@ -65,8 +88,7 @@ public class ProductServiceImpl implements ProductService{
         Optional<Product> optionalProduct = productRepository.findById(productDTO.getPno());
 
         optionalProduct.ifPresent(product ->{
-            product.setProductName(productDTO.getProductName());
-            product.setPrice(productDTO.getPrice());
+            product.ChangeName(optionalProduct.get().getProductName());
             productRepository.save(product);
         });
     }
