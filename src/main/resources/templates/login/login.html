@@ -121,4 +121,10 @@
     </div>
 
 </body>
+<script layout:fragment="script" th:inline="javascript">
+    const failLogin = [[${failLogin}]];
+    if (failLogin !== null){
+        alert(failLogin);
+    }
+</script>
 </html>

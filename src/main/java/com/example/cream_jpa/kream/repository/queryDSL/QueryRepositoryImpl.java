@@ -1,5 +1,6 @@
 package com.example.cream_jpa.kream.repository.queryDSL;
 import com.example.cream_jpa.kream.entity.QProduct;
+import com.example.cream_jpa.kream.entity.QPurchase_bid;
 import com.example.cream_jpa.kream.entity.QSales_bid;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
@@ -17,7 +18,7 @@ public class QueryRepositoryImpl extends QuerydslRepositorySupport implements Qu
 
 
     @Override
-    public int getMinPrice(Long pno) {
+    public int getMinSalesPrice(Long pno) {
 
         QProduct qProduct = QProduct.product;
         QSales_bid qSales_bid = QSales_bid.sales_bid;
@@ -31,4 +32,27 @@ public class QueryRepositoryImpl extends QuerydslRepositorySupport implements Qu
 
         return minPrice;
     }
+
+    @Override
+    public int getMaxPurchasePrice(Long pno) {
+
+        QProduct qProduct = QProduct.product;
+        QPurchase_bid qPurchase_bid = QPurchase_bid.purchase_bid;
+
+        Integer maxPrice =
+                jpaQueryFactory.select(qPurchase_bid.purchasePrice.max())
+                        .from(qProduct)
+                        .join(qProduct.purchase_bids, qPurchase_bid)
+                        .where(qProduct.pno.eq(pno))
+                        .fetchOne();
+        if (maxPrice != null){
+            return maxPrice;
+        }else{
+            return 0;
+        }
+
+
+    }
+
+
 }

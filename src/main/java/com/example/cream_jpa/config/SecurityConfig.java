@@ -23,7 +23,13 @@ public class SecurityConfig {
                 // 인증 필요한 url
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.GET, "/kream/register").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/kream/register").authenticated()
                         .requestMatchers(HttpMethod.GET, "/kream/modify").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/kream/modify").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/sales").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/sales/add").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/purchase").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/purchase/add").authenticated()
                         .anyRequest()
                         .permitAll()
                 )

@@ -10,5 +10,9 @@ import java.util.List;
 @Repository
 public interface QueryRepository{
 
-    int getMinPrice(Long pno); // 최저판매가
+    int getMinSalesPrice(Long pno); // 최저판매가
+    
+    int getMaxPurchasePrice(Long pno); // 최고구매가
+
+
 }

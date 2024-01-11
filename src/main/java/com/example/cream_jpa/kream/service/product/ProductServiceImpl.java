@@ -1,18 +1,16 @@
-package com.example.cream_jpa.kream.service;
+package com.example.cream_jpa.kream.service.product;
 
 import com.example.cream_jpa.kream.dto.ProductDTO;
 import com.example.cream_jpa.kream.entity.Product;
 import com.example.cream_jpa.kream.entity.Sales_bid;
 import com.example.cream_jpa.kream.repository.ProductRepository;
 import com.example.cream_jpa.kream.repository.SalesBidRepository;
-import com.example.cream_jpa.kream.repository.queryDSL.QueryRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -35,7 +33,7 @@ public class ProductServiceImpl implements ProductService{
         productRepository.save(product);
 
         // Sales_bid 엔티티 생성 및 설정
-        Sales_bid salesBid = new Sales_bid(0L,productDTO.getMno(),productDTO.getPrice(), product);
+        Sales_bid salesBid = new Sales_bid(0L,productDTO.getMno(),productDTO.getSalesPrice(), LocalDateTime.now(), product);
 
         // Sales_bid 엔티티 저장
         salesBidRepository.save(salesBid);
@@ -61,7 +59,8 @@ public class ProductServiceImpl implements ProductService{
         List<ProductDTO> productDTOList = productPage.getContent().stream()
                 .map(product -> {
                     ProductDTO productDTO = product.toDTO();
-                    productDTO.setPrice(productRepository.getMinPrice(product.getPno()));
+                    productDTO.setPurchasePrice(productRepository.getMaxPurchasePrice(product.getPno()));
+                    productDTO.setSalesPrice(productRepository.getMinSalesPrice(product.getPno()));
                     return productDTO;
                 })
                 .collect(Collectors.toList());
@@ -78,7 +77,8 @@ public class ProductServiceImpl implements ProductService{
         ProductDTO productDTO = new ProductDTO();
         productDTO.setPno(product.get().getPno());
         productDTO.setProductName(product.get().getProductName());
-        productDTO.setPrice(productRepository.getMinPrice(product.get().getPno()));
+        productDTO.setPurchasePrice(productRepository.getMaxPurchasePrice(product.get().getPno()));
+        productDTO.setSalesPrice(productRepository.getMinSalesPrice(product.get().getPno()));
         return Optional.of(productDTO);
     }
 
@@ -93,7 +93,7 @@ public class ProductServiceImpl implements ProductService{
         });
     }
 
-    @Override
+    @Override // 상품삭제
     public void removeOne(Long pno) {
         productRepository.deleteById(pno);
     }

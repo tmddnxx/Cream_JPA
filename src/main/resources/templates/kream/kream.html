@@ -84,7 +84,7 @@
                         <div class="card_price">
                             <div class="d-flex gap-5 justify-content-end">
                                 <h5>즉시 구매가</h5>
-                                <h5 th:text="${#numbers.formatDecimal(list.price, 0, 'COMMA', 0, 'POINT')} + '원'"></h5>
+                                <h5 th:text="${#numbers.formatDecimal(list.salesPrice, 0, 'COMMA', 0, 'POINT')} + '원'"></h5>
                             </div>
                         </div>
                     </div>

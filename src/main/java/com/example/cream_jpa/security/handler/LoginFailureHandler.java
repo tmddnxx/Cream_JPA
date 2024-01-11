@@ -16,9 +16,9 @@ public class LoginFailureHandler extends SimpleUrlAuthenticationFailureHandler {
         // 실패 메시지를 담기 위해 세션 생성
         HttpSession session = request.getSession();
         // 세션에 실패 메시지 담기
-        session.setAttribute("정보가 일치하지 않습니다.", exception.getMessage());
+        session.setAttribute("failLogin", "정보가 일치하지 않습니다.");
         // 실패 시 이동할 페이지
-        setDefaultFailureUrl("/signin");
+        setDefaultFailureUrl("/login");
         super.onAuthenticationFailure(request, response, exception);
     }
 }

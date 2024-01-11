@@ -67,7 +67,7 @@
     .inner-bottom h6{
         font-weight: 700;
     }
-    .salesAddBtn{
+    .purchaseAddBtn{
         background-color: #222222;
         border-radius: 12px;
         border: none;
@@ -106,16 +106,16 @@
                         </div>
                     </div>
                     <div class="inner-bottom">
-                        <form action="/sales/add" method="post">
+                        <form action="/purchase/add" method="post">
                             <input type="hidden" name="mno" th:value="${#authentication.principal.mno}">
                             <input type="hidden" name="pno" th:value="${productDTO.pno}">
-                            <h6>판매 희망가</h6>
+                            <h6>구매 희망가</h6>
                             <div class="d-flex justify-content-center align-items-center">
-                                <input type="text" name="salesPrice" class="input-product price" maxlength="13" autocomplete="off" placeholder="희망가 입력">
+                                <input type="text" name="purchasePrice" class="input-product price" maxlength="13" autocomplete="off" placeholder="희망가 입력">
                                 <h6>원</h6>
                             </div>
                             <div>
-                                <button type="submit" class="salesAddBtn">판매 입찰</button>
+                                <button type="submit" class="purchaseAddBtn">구매 입찰</button>
                             </div>
                         </form>
                     </div>

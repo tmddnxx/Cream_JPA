@@ -1,8 +1,10 @@
 package com.example.cream_jpa.kream.controller;
 
 import com.example.cream_jpa.kream.dto.ProductDTO;
+import com.example.cream_jpa.kream.dto.Purchase_bidDTO;
 import com.example.cream_jpa.kream.dto.Sales_bidDTO;
 import com.example.cream_jpa.kream.service.product.ProductService;
+import com.example.cream_jpa.kream.service.purchaseBid.PurchaseBidService;
 import com.example.cream_jpa.kream.service.salesBid.SalesBidService;
 import groovy.util.logging.Log4j2;
 import lombok.RequiredArgsConstructor;
@@ -15,13 +17,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import java.util.Optional;
 
 @Controller
-@RequestMapping("/sales")
+@RequestMapping("/purchase")
 @RequiredArgsConstructor
 @Log4j2
-public class SalesController {
+public class PurchaseController {
 
     private final ProductService productService;
-    private final SalesBidService salesBidService;
+    private final PurchaseBidService purchaseBidService;
 
     @GetMapping("")
     public String Sales(Long pno, Model model){
@@ -29,15 +31,15 @@ public class SalesController {
 
         model.addAttribute("productDTO", productDTO.get());
 
-        return "kream/sales";
+        return "kream/purchase";
     }
 
     @PostMapping("/add")
-    public String add(Sales_bidDTO sales_bidDTO){
+    public String add(Purchase_bidDTO purchase_bidDTO){
 
-        salesBidService.addSales(sales_bidDTO);
+        purchaseBidService.addPurchase(purchase_bidDTO);
 
-        return "redirect:/kream/view?pno="+sales_bidDTO.getPno();
+        return "redirect:/kream/view?pno="+purchase_bidDTO.getPno();
     }
 
 }

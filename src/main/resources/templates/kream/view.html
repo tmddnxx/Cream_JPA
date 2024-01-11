@@ -107,31 +107,32 @@
             <div class="inner-right w-50">
                 <div class="top">
                     <p class="p-0 m-0">즉시 구매가</p>
-                    <h4 th:text="${#numbers.formatDecimal(productDTO.price, 0, 'COMMA', 0, 'POINT')} + '원'"></h4>
+                    <h4 th:text="${#numbers.formatDecimal(productDTO.salesPrice, 0, 'COMMA', 0, 'POINT')} + '원'"></h4>
                     <p class="mt-2">[[${productDTO.productName}]]</p>
                 </div>
                 <div class="info">
 
                 </div>
                 <div class="btnBox d-flex">
-                    <a href="/purchase" class="purchase button">
+                    <a th:href="@{/purchase(pno=${productDTO.pno})}" class="purchase button">
                         <div class="d-flex">
                             <div class="border-right">
                                 <h5>구매</h5>
                             </div>
                             <div class="priceBtn">
-                                <h6 th:text="${#numbers.formatDecimal(productDTO.price, 0, 'COMMA', 0, 'POINT')} + '원'"></h6>
+                                <p th:text="${#numbers.formatDecimal(productDTO.salesPrice, 0, 'COMMA', 0, 'POINT')} + '원'"></p>
                                 <p>즉시 구매가</p>
                             </div>
                         </div>
                     </a>
-                    <a href="/sales" class="sales button">
+                    <a th:href="@{/sales(pno=${productDTO.pno})}" class="sales button">
                         <div class="d-flex">
                             <div class="border-right">
                                 <h5>판매</h5>
                             </div>
                             <div class="priceBtn">
-                                <h6 th:text="${#numbers.formatDecimal(productDTO.price, 0, 'COMMA', 0, 'POINT')} + '원'"></h6>
+                                <p th:if="${productDTO.purchasePrice != 0}" th:text="${#numbers.formatDecimal(productDTO.purchasePrice, 0, 'COMMA', 0, 'POINT')} + '원'"></p>
+                                <p th:unless="${productDTO.purchasePrice != 0}" th:text="'판매입찰하기'"></p>
                                 <p>즉시 판매가</p>
                             </div>
                         </div>

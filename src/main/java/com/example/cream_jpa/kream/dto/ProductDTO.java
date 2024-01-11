@@ -20,7 +20,9 @@ public class ProductDTO {
 
     private String productName; // 상품이름
 
-    private int price; // 판매자 초기설정 가격
+    private int salesPrice; // 판매자 초기설정 가격
+
+    private int purchasePrice; // 구매 입찰가 중 비싼 가격.
 
     public Product toEntity(){
         Product product = Product.builder()

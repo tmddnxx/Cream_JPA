@@ -1,15 +1,12 @@
 package com.example.cream_jpa.kream.controller;
 
 import com.example.cream_jpa.kream.dto.ProductDTO;
-import com.example.cream_jpa.kream.entity.Product;
-import com.example.cream_jpa.kream.service.ProductService;
-import com.example.cream_jpa.member.dto.MemberDTO;
+import com.example.cream_jpa.kream.service.product.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;

@@ -1,4 +1,4 @@
-package com.example.cream_jpa.kream.service;
+package com.example.cream_jpa.kream.service.product;
 
 import com.example.cream_jpa.kream.dto.ProductDTO;
 import org.springframework.data.domain.Page;
