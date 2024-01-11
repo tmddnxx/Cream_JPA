@@ -32,7 +32,7 @@ public class Purchase_bid{
     private Product product; // 상품코드에 대한 연관 관계
 
 
-    public void changePrice(int purchasePrice){ // 판매입찰을 했다면 가격바꿈
+    public void changePrice(int purchasePrice){ // 구매입찰을 했다면 가격바꿈
         this.purchasePrice = purchasePrice;
 
     }
