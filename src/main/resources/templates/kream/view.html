@@ -3,6 +3,7 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{inc/layout.html}">
 <head>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <meta charset="UTF-8">
     <title>Product View</title>
 </head>
@@ -35,6 +36,9 @@
         display: flex;
         flex-direction: column;
         justify-content: space-between;
+    }
+    .chartBox{
+        height: 250px;
     }
     .btnBox{
         justify-content: space-between;
@@ -111,7 +115,14 @@
                     <p class="mt-2">[[${productDTO.productName}]]</p>
                 </div>
                 <div class="info">
-
+                    <div class="infoBox">
+                        <p>상품정보1</p>
+                        <p>상품정보1</p>
+                        <p>상품정보1</p>
+                    </div>
+                    <div class="chartBox">
+                        <canvas id="myLineChart" width="400" height="200"></canvas>
+                    </div>
                 </div>
                 <div class="btnBox d-flex">
                     <a th:href="@{/purchase(pno=${productDTO.pno})}" class="purchase button">
@@ -140,13 +151,74 @@
                 </div>
             </div>
         </div>
-        <div class="ownBtn_box mb-4">
-            <a class="modifyBtn ownBtn" th:href="@{/kream/modify(pno=${productDTO.pno})}">수정</a>
-            <a class="removeBtn ownBtn" th:href="@{/kream/remove(pno=${productDTO.pno})}">삭제</a>
-        </div>
+<!--        수정/삭제 기능 없음-->
+<!--        <th:block th:if="${#authentication.principal != 'anonymousUser'}">-->
+<!--            <div class="ownBtn_box mb-4" th:if="${productDTO.mno == #authentication.principal.mno}">-->
+<!--                <a class="modifyBtn ownBtn" th:href="@{/kream/modify(pno=${productDTO.pno})}">수정</a>-->
+<!--                <a class="removeBtn ownBtn" th:href="@{/kream/remove(pno=${productDTO.pno})}">삭제</a>-->
+<!--            </div>-->
+<!--        </th:block>-->
     </div>
 </body>
+
 <script layout:fragment="script" th:inline="javascript">
 
+    const quoteList = [[${quoteList}]];
+    console.log(quoteList[0]);
+    console.log(quoteList[0].quote);
+    console.log(quoteList[0].buyDate);
+    let day_6 = [[${quoteList[6].buyDate}]]
+    let day_5 = [[${quoteList[5].buyDate}]]
+    let day_4 = [[${quoteList[4].buyDate}]]
+    let day_3 = [[${quoteList[3].buyDate}]]
+    let day_2 = [[${quoteList[2].buyDate}]]
+    let day_1 = [[${quoteList[1].buyDate}]]
+    let day_d = [[${quoteList[0].buyDate}]]
+
+    let dataValues = [
+        [[${quoteList[6].quote}]],
+        [[${quoteList[5].quote}]],
+        [[${quoteList[4].quote}]],
+        [[${quoteList[3].quote}]],
+        [[${quoteList[2].quote}]],
+        [[${quoteList[1].quote}]],
+        [[${quoteList[0].quote}]]
+    ];
+
+
+    // 데이터
+    const data = {
+    labels: [day_6,day_5,day_4, day_3, day_2, day_1,day_d], // 날짜
+    datasets: [{
+        label: '체결가',
+        data: dataValues, // 가격
+        borderColor: 'rgb(248,64,64)',
+        borderWidth: 1,
+        fill: false
+    }]
+    };
+
+    // 차트 그리기
+    const ctx = document.getElementById('myLineChart').getContext('2d');
+    const myLineChart = new Chart(ctx, {
+    type: 'line',
+    data: data,
+    options: {
+        scales: {
+            x: {
+                grid: {
+                    display: false // X축 그리드 라인 숨김
+                }
+            },
+            y: {
+                grid: {
+                    display: false // Y축 그리드 라인 숨김
+                },
+                beginAtZero: true,
+                position: 'right'
+            }
+        }
+    }
+    });
 </script>
 </html>

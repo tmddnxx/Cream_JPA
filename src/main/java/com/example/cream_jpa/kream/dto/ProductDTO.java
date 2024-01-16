@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Data
 @Builder
 @AllArgsConstructor
@@ -23,6 +25,9 @@ public class ProductDTO {
     private int salesPrice; // 판매자 초기설정 가격
 
     private int purchasePrice; // 구매 입찰가 중 비싼 가격.
+
+    private int quote; // 시세
+    private LocalDate buyDate; // 체결날짜
 
     public Product toEntity(){
         Product product = Product.builder()

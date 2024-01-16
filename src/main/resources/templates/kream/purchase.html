@@ -78,6 +78,39 @@
         height: 52px;
         letter-spacing: -.16px;
     }
+
+    .switchBox{
+        display: flex;
+        align-items: center;
+        justify-content: space-evenly;
+        background-color: #f4f4f4;
+        color: rgba(34,34,34,.8);
+        border-radius: 15px;
+        height: 55px;
+        margin-bottom: 30px;
+    }
+    .switchBox div{
+        width: 48%;
+        height: 80%;
+        text-align: center;
+        border: none;
+        border-radius: 15px;
+        padding: 5px;
+        display: flex;
+        align-items: center;
+        font-weight: 700;
+    }
+    .switchBox label{
+        width: 100%;
+        margin: 0;
+    }
+    .purchaseTab{
+        display: none;
+    }
+    .tabOn{
+        background-color: #41b979;
+        color: white;
+    }
 </style>
 <body>
     <div layout:fragment="content">
@@ -96,7 +129,8 @@
                         <div >
                             <p>즉시 구매가</p>
 <!--                            sales_bid의 최저가-->
-                            <p th:text="${#numbers.formatDecimal(productDTO.salesPrice, 0, 'COMMA', 0, 'POINT')} + '원'"></p>
+                            <p th:if="${productDTO.salesPrice == 0}" th:text="'구매 입찰하기'"></p>
+                            <p th:unless="${productDTO.salesPrice == 0}" th:text="${#numbers.formatDecimal(productDTO.salesPrice, 0, 'COMMA', 0, 'POINT')} + '원'"></p>
                         </div>
                         <div class="bord"></div>
                         <div>
@@ -105,13 +139,26 @@
                             <p th:text="${#numbers.formatDecimal(productDTO.purchasePrice, 0, 'COMMA', 0, 'POINT')} + '원'"></p>
                         </div>
                     </div>
+                    <!--                    즉시 구매 / 구매 입찰 스위치 버튼-->
+                    <div class="switchBox">
+                        <div class="tabBox">
+                            <label for="tab1">구매 입찰</label>
+                            <input type="radio" name="tab" value="bid" id="tab1" class="purchaseTab" th:checked="${tab == 'bid'}">
+                        </div>
+                        <div class="tabBox">
+                            <label for="tab2">즉시 구매</label>
+                            <input type="radio" name="tab" value="now" id="tab2" class="purchaseTab" th:checked="${tab == 'now'}" th:disabled="${productDTO.salesPrice == 0}">
+                        </div>
+                    </div>
                     <div class="inner-bottom">
-                        <form action="/purchase/add" method="post">
+                        <form method="post" name="purchaseFrm">
                             <input type="hidden" name="mno" th:value="${#authentication.principal.mno}">
                             <input type="hidden" name="pno" th:value="${productDTO.pno}">
-                            <h6>구매 희망가</h6>
+                            <h6 th:if="${tab == 'bid'}">구매 희망가</h6>
+                            <h6 th:if="${tab == 'now'}">즉시 구매가</h6>
                             <div class="d-flex justify-content-center align-items-center">
-                                <input type="text" name="purchasePrice" class="input-product price" maxlength="13" autocomplete="off" placeholder="희망가 입력">
+                                <input th:if="${tab == 'bid'}" type="text" name="purchasePrice" class="input-product price" maxlength="13" autocomplete="off" placeholder="희망가 입력">
+                                <input th:if="${tab == 'now'}" th:text="${#numbers.formatDecimal(productDTO.salesPrice, 0, 'COMMA', 0, 'POINT')}" th:value="${productDTO.salesPrice}" type="text" name="purchasePrice" class="input-product price" maxlength="13" autocomplete="off" placeholder="희망가 입력" readonly style="visibility: hidden">
                                 <h6>원</h6>
                             </div>
                             <div class="mt-5">
@@ -126,5 +173,54 @@
 </body>
 <script layout:fragment="script" th:inline="javascript">
 
+    // 스위치 탭 설정
+    const purchaseTabs = document.querySelectorAll('.purchaseTab');
+    const pno = [[${productDTO.pno}]];
+    purchaseTabs.forEach(purchaseTab => {
+        const tabBox = purchaseTab.closest('.tabBox');
+        if(purchaseTab.checked){
+            tabBox.classList.add('tabOn');
+        }
+        purchaseTab.addEventListener('change', function (){
+            const tabValue = purchaseTab.value;
+            location.href = `/purchase?pno=${pno}&tab=${tabValue}`;
+
+            document.querySelectorAll('.tabBox').forEach(function (tabBox){
+                tabBox.classList.remove('tabOn');
+            })
+        })
+    })
+
+    // 가격에 콤마달기, 문자입력안되게
+    const price = document.querySelector('.price');
+    price.addEventListener('keyup', function (e){
+        let value = e.target.value;
+
+        // 숫자만 허용하도록 검사
+        if (isNaN(value)) {
+            // 숫자가 아니면 입력을 취소하고 함수를 종료
+            e.target.value = value.replace(/[^\d]/g, '');
+            return;
+        }
+
+        value = Number(value.replaceAll(',', ''));
+        const formatValue = value.toLocaleString('ko-KR');
+        price.value = formatValue;
+    })
+
+    // 폼 제출할때
+    const purchaseFrm = document.querySelector('Form[name=purchaseFrm]');
+    const tabValue = [[${tab}]];
+    purchaseFrm.addEventListener('submit', function (){
+        price.value = Number(price.value.replace(/,/g, ''));
+        if (tabValue === 'bid'){
+
+            purchaseFrm.action = `/purchase/add`;
+        }
+        else if(tabValue === 'now'){
+
+            purchaseFrm.action = `/purchase/now`;
+        }
+    })
 </script>
 </html>

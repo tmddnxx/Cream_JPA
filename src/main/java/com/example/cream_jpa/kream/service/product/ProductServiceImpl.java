@@ -2,25 +2,34 @@ package com.example.cream_jpa.kream.service.product;
 
 import com.example.cream_jpa.kream.dto.ProductDTO;
 import com.example.cream_jpa.kream.entity.Product;
+import com.example.cream_jpa.kream.entity.Purchase_bid;
 import com.example.cream_jpa.kream.entity.Sales_bid;
 import com.example.cream_jpa.kream.repository.ProductRepository;
+import com.example.cream_jpa.kream.repository.PurchaseBidRepository;
 import com.example.cream_jpa.kream.repository.SalesBidRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.*;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@Log4j2
 @RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService{
 
     private final ProductRepository productRepository;
     private final SalesBidRepository salesBidRepository;
+    private final PurchaseBidRepository purchaseBidRepository;
 
 
     @Override
@@ -33,7 +42,7 @@ public class ProductServiceImpl implements ProductService{
         productRepository.save(product);
 
         // Sales_bid 엔티티 생성 및 설정
-        Sales_bid salesBid = new Sales_bid(0L,productDTO.getMno(),productDTO.getSalesPrice(), LocalDateTime.now(), product);
+        Sales_bid salesBid = new Sales_bid(null,productDTO.getMno(),productDTO.getSalesPrice(), LocalDateTime.now(), false, null, null, product);
 
         // Sales_bid 엔티티 저장
         salesBidRepository.save(salesBid);
@@ -59,8 +68,8 @@ public class ProductServiceImpl implements ProductService{
         List<ProductDTO> productDTOList = productPage.getContent().stream()
                 .map(product -> {
                     ProductDTO productDTO = product.toDTO();
-                    productDTO.setPurchasePrice(productRepository.getMaxPurchasePrice(product.getPno()));
-                    productDTO.setSalesPrice(productRepository.getMinSalesPrice(product.getPno()));
+                    productDTO.setPurchasePrice(productRepository.getMaxPurchasePrice(product.getPno(), false));
+                    productDTO.setSalesPrice(productRepository.getMinSalesPrice(product.getPno(), false));
                     return productDTO;
                 })
                 .collect(Collectors.toList());
@@ -77,8 +86,8 @@ public class ProductServiceImpl implements ProductService{
         ProductDTO productDTO = new ProductDTO();
         productDTO.setPno(product.get().getPno());
         productDTO.setProductName(product.get().getProductName());
-        productDTO.setPurchasePrice(productRepository.getMaxPurchasePrice(product.get().getPno()));
-        productDTO.setSalesPrice(productRepository.getMinSalesPrice(product.get().getPno()));
+        productDTO.setPurchasePrice(productRepository.getMaxPurchasePrice(product.get().getPno(), false));
+        productDTO.setSalesPrice(productRepository.getMinSalesPrice(product.get().getPno(), false));
         return Optional.of(productDTO);
     }
 
@@ -96,5 +105,80 @@ public class ProductServiceImpl implements ProductService{
     @Override // 상품삭제
     public void removeOne(Long pno) {
         productRepository.deleteById(pno);
+    }
+
+    @Override // 시세 보기
+    public List<ProductDTO> getQuote(Long pno) {
+        List<ProductDTO> quoteList = new ArrayList<>();
+        LocalDate today = LocalDate.now();
+
+        for(int i=0; i<7; i++){
+            LocalDate currentDay = today.minusDays(i);
+
+            Integer quote = productRepository.getQuote(pno, currentDay);
+            quoteList.add(ProductDTO.builder()
+                    .pno(pno)
+                    .quote(quote)
+                    .buyDate(currentDay)
+                    .build());
+        }
+
+        return quoteList;
+    }
+
+
+    @Scheduled(cron = "0 0 0 * * ?")
+    @Override
+    public void deal() { // 매일 자정에 각각 입찰가 비교 후 체결처리하기
+        log.info("스케쥴");
+
+        List<Product> products = productRepository.findAll();
+        for (Product product : products){
+            Long pno = product.getPno();
+
+            List<Purchase_bid> purchase_bids = purchaseBidRepository.findByProductPnoAndIsBuyFalseOrderByBidDateAsc(pno);
+            List<Sales_bid> sales_bids = salesBidRepository.findByProductPnoAndIsBuyFalseOrderByBidDateAsc(pno);
+
+            for (Purchase_bid purchaseBid : purchase_bids) {
+                // 각 Purchase_bid에 대해 가장 오래된 Sales_bid 찾기
+                Optional<Sales_bid> optionalOldestSalesBid = salesBidRepository.findTopByProductPnoAndSalesPriceAndIsBuyOrderByBidDateAsc(
+                        purchaseBid.getProduct().getPno(), purchaseBid.getPurchasePrice(), false);
+
+                // 가장 오래된 Sales_bid에 대해만 처리
+                optionalOldestSalesBid.ifPresent(oldestSalesBid -> {
+                    purchaseBid.bought(oldestSalesBid.getMno());
+                    oldestSalesBid.bought(purchaseBid.getMno());
+                    purchaseBidRepository.save(purchaseBid);
+                    salesBidRepository.save(oldestSalesBid);
+                    log.info("12시가되면 처리해요");
+                });
+            }
+
+            for (Sales_bid salesBid : sales_bids) {
+                // 각 Sales_bid에 대해 가장 오래된 Purchase_bid 찾기
+                Optional<Purchase_bid> optionalOldestPurchaseBid = purchaseBidRepository.findTopByProductPnoAndPurchasePriceAndIsBuyOrderByBidDateAsc(
+                        salesBid.getProduct().getPno(), salesBid.getSalesPrice(), false);
+
+                // 가장 오래된 Purchase_bid에 대해만 처리
+                optionalOldestPurchaseBid.ifPresent(oldestPurchaseBid -> {
+                    salesBid.bought(oldestPurchaseBid.getMno());
+                    oldestPurchaseBid.bought(salesBid.getMno());
+                    salesBidRepository.save(salesBid);
+                    purchaseBidRepository.save(oldestPurchaseBid);
+                    log.info("12시가되면 처리해요");
+                });
+            }
+        }
+    }
+
+    @Override
+    public List<ProductDTO> recentPrices(Long pno) {
+        List<ProductDTO> productDTOList = new ArrayList<>();
+        List<Purchase_bid> purchase_bids = purchaseBidRepository.findTop5ByProductPnoAndIsBuyTrueOrderByBuyDateAsc(pno);
+        List<Sales_bid> sales_bids = salesBidRepository.findTop5ByProductPnoAndIsBuyTrueOrderByBuyDateAsc(pno);
+
+
+
+        return null;
     }
 }

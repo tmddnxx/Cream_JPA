@@ -6,8 +6,8 @@ import com.example.cream_jpa.kream.dto.Sales_bidDTO;
 import com.example.cream_jpa.kream.service.product.ProductService;
 import com.example.cream_jpa.kream.service.purchaseBid.PurchaseBidService;
 import com.example.cream_jpa.kream.service.salesBid.SalesBidService;
-import groovy.util.logging.Log4j2;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,9 +26,14 @@ public class PurchaseController {
     private final PurchaseBidService purchaseBidService;
 
     @GetMapping("")
-    public String Sales(Long pno, Model model){
+    public String Sales(Long pno, Model model, String tab){
         Optional<ProductDTO> productDTO = productService.getOne(pno);
 
+        if(tab == null){
+            tab = "bid";
+        }
+
+        model.addAttribute("tab", tab);
         model.addAttribute("productDTO", productDTO.get());
 
         return "kream/purchase";
@@ -36,10 +41,16 @@ public class PurchaseController {
 
     @PostMapping("/add")
     public String add(Purchase_bidDTO purchase_bidDTO){
-
         purchaseBidService.addPurchase(purchase_bidDTO);
 
         return "redirect:/kream/view?pno="+purchase_bidDTO.getPno();
     }
 
+    @PostMapping("/now")
+    public String now(Purchase_bidDTO purchase_bidDTO){
+
+        purchaseBidService.purChaseNow(purchase_bidDTO);
+
+        return "redirect:/kream/view?pno="+purchase_bidDTO.getPno();
+    }
 }

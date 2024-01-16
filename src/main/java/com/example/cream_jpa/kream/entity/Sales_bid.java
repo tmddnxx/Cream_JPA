@@ -1,17 +1,19 @@
 package com.example.cream_jpa.kream.entity;
 
-import com.example.cream_jpa.kream.dto.Sales_bidDTO;
+
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
+
 
 @Entity
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class Sales_bid {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,13 +29,24 @@ public class Sales_bid {
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime bidDate; // 입찰날짜
 
+    @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT false")
+    private boolean isBuy; // 판매완료
+
+    @Column
+    private Long buyMno; // 구매자
+
+    @Column
+    private LocalDate buyDate; // 체결 날짜
+
     @ManyToOne
     @JoinColumn(name = "pno", referencedColumnName = "pno")
     private Product product; // 상품코드에 대한 연관 관계
 
 
-    public void changePrice(int salesPrice){ // 판매입찰을 했다면 가격바꿈
-        this.salesPrice = salesPrice;
 
+    public void bought(Long buyMno){ // 판매처리
+        this.isBuy = true;
+        this.buyMno = buyMno;
+        this.buyDate = LocalDate.now();
     }
 }

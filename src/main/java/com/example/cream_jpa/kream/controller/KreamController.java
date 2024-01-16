@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -48,7 +49,9 @@ public class KreamController {
     @GetMapping("/view")
     public void view(Long pno, Model model){
         Optional<ProductDTO> productDTO = productService.getOne(pno); // Optional에 담김
+        List<ProductDTO> quoteList = productService.getQuote(pno); // 시세보기
 
+        model.addAttribute("quoteList", quoteList);
         model.addAttribute("productDTO", productDTO.get()); // 실제 dto을 전달
     }
 

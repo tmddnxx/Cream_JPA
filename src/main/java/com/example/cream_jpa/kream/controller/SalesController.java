@@ -24,18 +24,27 @@ public class SalesController {
     private final SalesBidService salesBidService;
 
     @GetMapping("")
-    public String Sales(Long pno, Model model){
+    public String Sales(Long pno, Model model, String tab){
         Optional<ProductDTO> productDTO = productService.getOne(pno);
-
+        if(tab == null){
+            tab = "bid";
+        }
         model.addAttribute("productDTO", productDTO.get());
-
+        model.addAttribute("tab", tab);
         return "kream/sales";
     }
 
-    @PostMapping("/add")
+    @PostMapping("/add") // 판매입찰
     public String add(Sales_bidDTO sales_bidDTO){
 
         salesBidService.addSales(sales_bidDTO);
+
+        return "redirect:/kream/view?pno="+sales_bidDTO.getPno();
+    }
+
+    @PostMapping("/now") // 즉시구매
+    public String now(Sales_bidDTO sales_bidDTO){
+        salesBidService.saleNow(sales_bidDTO);
 
         return "redirect:/kream/view?pno="+sales_bidDTO.getPno();
     }

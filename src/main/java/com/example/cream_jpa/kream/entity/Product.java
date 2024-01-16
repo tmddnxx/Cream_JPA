@@ -14,6 +14,7 @@ import java.util.OptionalInt;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class Product {
 
     @Id
@@ -26,9 +27,11 @@ public class Product {
 
 
     @OneToMany(mappedBy = "product")
+    @Builder.Default
     private List<Sales_bid> sales_bids = new ArrayList<>();
 
     @OneToMany(mappedBy = "product")
+    @Builder.Default
     private List<Purchase_bid> purchase_bids = new ArrayList<>();
 
     public ProductDTO toDTO() {
