@@ -4,6 +4,7 @@ import com.example.cream_jpa.kream.entity.Product;
 import com.example.cream_jpa.kream.entity.Sales_bid;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -18,6 +19,12 @@ public class Sales_bidDTO {
     
     private LocalDateTime bidDate; // 입찰날짜
 
+    private boolean isBuy; // 판매여부
+
+    private Long buyMno; // 구매자
+
+    private LocalDate buyDate; // 체결날짜
+
     public Sales_bid toEntity(){
         Product product = Product.builder()
                 .pno(this.pno)
@@ -27,6 +34,9 @@ public class Sales_bidDTO {
                 .mno(this.mno)
                 .salesPrice(this.salesPrice)
                 .bidDate(LocalDateTime.now())
+                .isBuy(this.isBuy)
+                .buyMno(this.buyMno)
+                .buyDate(this.buyDate)
                 .product(product)
                 .build();
         return sales_bid;

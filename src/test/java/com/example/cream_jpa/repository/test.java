@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,10 +30,20 @@ public class test {
 
     @Test
     public void recent(){
-        List<Purchase_bid> purchase_bids = purchaseBidRepository.findTop5ByProductPnoAndIsBuyTrueOrderByBuyDateAsc(2L);
+        List<Purchase_bid> purchase_bids = purchaseBidRepository.findTop5ByProductPnoAndIsBuyTrueOrderByBuyDateDesc(2L);
 
         for (Purchase_bid purchase_bid : purchase_bids){
             System.out.println("최근5"+purchase_bid.getPurchasePrice());
+        }
+    }
+
+    @Test
+    public void thirtyDaysAgo(){
+        LocalDateTime thirtyDaysAgo = LocalDateTime.now().minusDays(30);
+        List<Purchase_bid> purchase_bids = purchaseBidRepository.findByIsBuyFalseAndBidDateBefore(thirtyDaysAgo);
+
+        for (Purchase_bid purchase_bid : purchase_bids){
+            System.out.println("비드"+purchase_bid.getBidDate());
         }
     }
 }

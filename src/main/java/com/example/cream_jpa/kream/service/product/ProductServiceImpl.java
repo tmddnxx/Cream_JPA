@@ -1,6 +1,8 @@
 package com.example.cream_jpa.kream.service.product;
 
 import com.example.cream_jpa.kream.dto.ProductDTO;
+import com.example.cream_jpa.kream.dto.Purchase_bidDTO;
+import com.example.cream_jpa.kream.dto.Sales_bidDTO;
 import com.example.cream_jpa.kream.entity.Product;
 import com.example.cream_jpa.kream.entity.Purchase_bid;
 import com.example.cream_jpa.kream.entity.Sales_bid;
@@ -127,7 +129,7 @@ public class ProductServiceImpl implements ProductService{
     }
 
 
-    @Scheduled(cron = "0 0 0 * * ?")
+    @Scheduled(cron = "0 0 0 * * ?") // 매일 자정 실행
     @Override
     public void deal() { // 매일 자정에 각각 입찰가 비교 후 체결처리하기
         log.info("스케쥴");
@@ -171,14 +173,40 @@ public class ProductServiceImpl implements ProductService{
         }
     }
 
-    @Override
-    public List<ProductDTO> recentPrices(Long pno) {
-        List<ProductDTO> productDTOList = new ArrayList<>();
-        List<Purchase_bid> purchase_bids = purchaseBidRepository.findTop5ByProductPnoAndIsBuyTrueOrderByBuyDateAsc(pno);
-        List<Sales_bid> sales_bids = salesBidRepository.findTop5ByProductPnoAndIsBuyTrueOrderByBuyDateAsc(pno);
+    @Scheduled(cron = "0 0 0 * * ?") // 매일 자정 실행
+    @Override // 30일이 지난 입찰되지않은 레코드 삭제
+    public void deleteOldRecord() {
+        LocalDateTime thirtyDaysAgo = LocalDateTime.now().minusDays(30);
+        List<Purchase_bid> purchase_bids = purchaseBidRepository.findByIsBuyFalseAndBidDateBefore(thirtyDaysAgo);
+        List<Sales_bid> sales_bids = salesBidRepository.findByIsBuyFalseAndBidDateBefore(thirtyDaysAgo);
 
-
-
-        return null;
+        purchaseBidRepository.deleteAll(purchase_bids);
+        salesBidRepository.deleteAll(sales_bids);
     }
+
+    @Override // 최근 구매가 5개
+    public List<Purchase_bidDTO> recentPurchasePrices(Long pno) {
+
+        List<Purchase_bid> purchase_bids = purchaseBidRepository.findTop5ByProductPnoAndIsBuyTrueOrderByBuyDateDesc(pno);
+
+        // 반환된 스트림을 새로운 리스트로 수집합니다.
+        List<Purchase_bidDTO> purchase_bidDTOList = purchase_bids.stream()
+                .map(Purchase_bid::toDTO)
+                .collect(Collectors.toList());
+
+        return purchase_bidDTOList;
+    }
+
+    @Override // 최근 판매가 5개
+    public List<Sales_bidDTO> recentSalesPrices(Long pno) {
+
+        List<Sales_bid> sales_bids = salesBidRepository.findTop5ByProductPnoAndIsBuyTrueOrderByBuyDateDesc(pno);
+
+        List<Sales_bidDTO> sales_bidDTOList = sales_bids.stream()
+                .map(Sales_bid::toDto)
+                .collect(Collectors.toList());
+
+        return sales_bidDTOList;
+    }
+
 }

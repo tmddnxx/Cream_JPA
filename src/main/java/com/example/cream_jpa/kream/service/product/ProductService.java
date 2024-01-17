@@ -1,6 +1,8 @@
 package com.example.cream_jpa.kream.service.product;
 
 import com.example.cream_jpa.kream.dto.ProductDTO;
+import com.example.cream_jpa.kream.dto.Purchase_bidDTO;
+import com.example.cream_jpa.kream.dto.Sales_bidDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -22,6 +24,9 @@ public interface ProductService {
 
     void deal(); // 자동 체결처리
     
-    List<ProductDTO> recentPrices(Long pno); // 최근 거래가
+    void deleteOldRecord(); // 30일 지난 입찰되지않은 레코드 삭제
+    
+    List<Purchase_bidDTO> recentPurchasePrices(Long pno); // 최근 구매거래가
+    List<Sales_bidDTO> recentSalesPrices(Long pno); // 최근 구매거래가
 
 }

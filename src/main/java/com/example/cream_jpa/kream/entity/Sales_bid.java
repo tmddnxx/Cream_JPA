@@ -1,6 +1,8 @@
 package com.example.cream_jpa.kream.entity;
 
 
+import com.example.cream_jpa.kream.dto.ProductDTO;
+import com.example.cream_jpa.kream.dto.Sales_bidDTO;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -42,7 +44,18 @@ public class Sales_bid {
     @JoinColumn(name = "pno", referencedColumnName = "pno")
     private Product product; // 상품코드에 대한 연관 관계
 
+    public Sales_bidDTO toDto(){
+        Sales_bidDTO sales_bidDTO = new Sales_bidDTO();
+        sales_bidDTO.setSbNo(this.sbNo);
+        sales_bidDTO.setMno(this.mno);
+        sales_bidDTO.setSalesPrice(this.salesPrice);
+        sales_bidDTO.setBidDate(this.bidDate);
+        sales_bidDTO.setBuyMno(this.buyMno);
+        sales_bidDTO.setBuyDate(this.buyDate);
+        sales_bidDTO.setPno(this.product.getPno());
 
+        return sales_bidDTO;
+    }
 
     public void bought(Long buyMno){ // 판매처리
         this.isBuy = true;

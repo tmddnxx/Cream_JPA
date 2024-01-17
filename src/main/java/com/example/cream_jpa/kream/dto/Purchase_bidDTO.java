@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -20,6 +21,13 @@ public class Purchase_bidDTO {
 
     private LocalDateTime bidDate; // 입찰날짜
 
+    private boolean isBuy; // 판매여부
+
+    private Long buyMno; // 구매자
+
+    private LocalDate buyDate; // 체결날짜
+
+
     public Purchase_bid toEntity(){
         Product product = Product.builder()
                 .pno(this.pno)
@@ -29,6 +37,9 @@ public class Purchase_bidDTO {
                 .mno(this.mno)
                 .purchasePrice(this.purchasePrice)
                 .bidDate(LocalDateTime.now())
+                .isBuy(this.isBuy)
+                .buyMno(this.buyMno)
+                .buyDate(this.buyDate)
                 .product(product)
                 .build();
 

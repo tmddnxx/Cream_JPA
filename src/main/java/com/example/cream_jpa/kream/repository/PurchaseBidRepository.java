@@ -17,6 +17,8 @@ public interface PurchaseBidRepository extends JpaRepository<Purchase_bid, Long>
 
     List<Purchase_bid> findByProductPnoAndIsBuyFalseOrderByBidDateAsc(Long pno); // 특정상품에 체결되지않은 레코드 오래된 순으로 정렬한 List
 
-    List<Purchase_bid> findTop5ByProductPnoAndIsBuyTrueOrderByBuyDateAsc(Long pno); // 특정 상품의 최근거래 5개 List
+    List<Purchase_bid> findTop5ByProductPnoAndIsBuyTrueOrderByBuyDateDesc(Long pno); // 특정 상품의 최근거래 5개 List
+
+    List<Purchase_bid> findByIsBuyFalseAndBidDateBefore(LocalDateTime thirtyDaysAgo); // 30일이 경과한 입찰되지 않은 레코드 목록 -> 삭제
 
 }

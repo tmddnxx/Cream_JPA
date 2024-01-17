@@ -1,6 +1,8 @@
 package com.example.cream_jpa.kream.controller;
 
 import com.example.cream_jpa.kream.dto.ProductDTO;
+import com.example.cream_jpa.kream.dto.Purchase_bidDTO;
+import com.example.cream_jpa.kream.dto.Sales_bidDTO;
 import com.example.cream_jpa.kream.service.product.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -50,7 +52,11 @@ public class KreamController {
     public void view(Long pno, Model model){
         Optional<ProductDTO> productDTO = productService.getOne(pno); // Optional에 담김
         List<ProductDTO> quoteList = productService.getQuote(pno); // 시세보기
+        List<Purchase_bidDTO> purPriceList = productService.recentPurchasePrices(pno);
+        List<Sales_bidDTO> salesPriceList = productService.recentSalesPrices(pno);
 
+        model.addAttribute("salesPriceList", salesPriceList);
+        model.addAttribute("purPriceList", purPriceList);
         model.addAttribute("quoteList", quoteList);
         model.addAttribute("productDTO", productDTO.get()); // 실제 dto을 전달
     }
