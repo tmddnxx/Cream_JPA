@@ -92,11 +92,11 @@
                 <input type="hidden" name="mno" th:value="${#authentication.principal.mno}">
                 <div class="input-box">
                     <h6 class="input-title">이미지</h6>
-                    <input type="file" name="productImg" multiple>
+                    <input type="file" name="productImg" multiple onchange="uploadServer()">
                 </div>
                 <div class="input-box">
                     <h6 class="input-title">상품이름</h6>
-                    <input type="text" name="productName" class="input-product name" autocomplete="off">
+                    <input type="text" name="productName" class="input-product name" autocomplete="off" >
                 </div>
                 <div class="input-box">
                     <h6 class="input-title">상품가격</h6>
@@ -111,6 +111,7 @@
             </form>
         </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </div>
 </body>
 <script layout:fragment="script" th:inline="javascript">
@@ -135,6 +136,29 @@
     function priceValue(){
         price.value = Number(price.value.replace(/,/g, ''));
     }
+
+    // 이미지 업로드
+    async function upload(url, formObj){
+        const response = await axios.post(url, formObj)
+
+        return response.data;
+    }
+
+
+    function uploadServer(){
+        const formObj = new FormData();
+        const fileInput = document.querySelector('input[name=productImg]')
+        const files = fileInput.files;
+        console.log("files : " ,files);
+        for (let i = 0; i<files.length; i++){
+            formObj.append("productImg", files[i])
+        }
+        upload('/img/upload', formObj).then(result => {
+            console.log(result);
+        })
+    }
+
+
 
 </script>
 </html>
