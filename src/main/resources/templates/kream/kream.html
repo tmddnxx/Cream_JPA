@@ -71,12 +71,12 @@
     </th:block>
 
     <div class="shop_area">
-        <h1 class="text-center">SHOP</h1>
+        <h1 class="text-center mb-3">SHOP</h1>
         <!--    상품 목록-->
         <div class="productList w-75">
             <div class="card-body" th:each="list:${productList}">
                 <a th:href="@{/kream/view(pno=${list.pno})}">
-                    <div class="card-top text-center">
+                    <div class="card-top pt-5 text-center">
                         <img src="https://image-cdn.hypb.st/https%3A%2F%2Fkr.hypebeast.com%2Ffiles%2F2022%2F01%2FNike-air-force-1-flax-official-release-info-ft.jpg?" width="200">
                     </div>
                     <div class="card-bottom">
@@ -96,7 +96,7 @@
         <div th:if="${productList.totalPages >= 1}" class="pagination">
             <ul>
                 <li th:each="i : ${#numbers.sequence(1, productList.totalPages)}">
-                    <a th:href="@{/kream(page=${i})}" th:text="${i}" th:class="${i == productList.number+1 ? 'active' : ''}"></a>
+                    <a th:href="@{/kream(page=${i},keyword=${keyword})}" th:text="${i}" th:class="${i == productList.number+1 ? 'active' : ''}"></a>
                 </li>
             </ul>
         </div>

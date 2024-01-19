@@ -37,8 +37,25 @@ public class ProductServiceImpl implements ProductService{
     @Override
     @Transactional
     public void register(ProductDTO productDTO) { // 상품등록
+        String productImg;
+        List<String> files = productDTO.getProductImg();
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i=0; i < files.size(); i++){
+            String file = files.get(i);
+            stringBuilder.append(file);
+
+            if(i < files.size()-1){
+                stringBuilder.append(", ");
+            }
+        }
+
+        productImg = stringBuilder.toString();
+
         // ProductDTO를 이용하여 Product 엔티티 생성
-        Product product = productDTO.toEntity();
+        Product product = Product.builder()
+                .productImg(productImg)
+                .productName(productDTO.getProductName())
+                .build();
 
         // Product 엔티티 저장
         productRepository.save(product);
@@ -51,15 +68,22 @@ public class ProductServiceImpl implements ProductService{
     }
 
     @Override
-    public Page<ProductDTO> getAllProduct(Pageable pageable) {
+    public Page<ProductDTO> getAllProduct(String keyword, Pageable pageable) {
         // 정렬 기준을 'pno' 기준으로 내림차순으로 설정합니다.
         Sort sort = Sort.by("pno").descending();
 
         // 페이지 요청 정보(pageable)에 정렬을 적용하여 새로운 페이지 요청 정보를 생성합니다.
         pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
 
+        Page<Product> productPage;
         // 실제로 데이터베이스에서 페이징 및 정렬된 데이터를 조회합니다.
-        Page<Product> productPage = productRepository.findAll(pageable);
+        if(keyword != null){
+            productPage = productRepository.PRODUCT_PAGE(keyword, pageable);
+            log.info(" 검색 토탈 페이지 "+productPage.getTotalElements());
+        }else {
+            productPage = productRepository.findAll(pageable);
+            log.info("전체 갯수"+ productPage.getTotalElements());
+        }
 
         // 조회된 엔터티 목록을 ProductDTO로 변환합니다.
         // getContent - Page에 포함된 엔티티목록가져오는메서드

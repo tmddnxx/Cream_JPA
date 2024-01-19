@@ -1,7 +1,9 @@
 package com.example.cream_jpa.kream.repository.queryDSL;
 
 import com.example.cream_jpa.kream.entity.Product;
+import groovy.lang.Tuple;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
 
@@ -17,4 +19,5 @@ public interface QueryRepository{
 
     int getQuote(Long pno, LocalDate buyDate); // 구매/판매 시세
 
+    Page<Product> PRODUCT_PAGE(String keyword, Pageable pageable);
 }

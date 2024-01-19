@@ -27,10 +27,11 @@ public class KreamController {
     private final ProductService productService;
 
     @GetMapping("")
-    public String kream(Pageable pageable, Model model){
+    public String kream(String keyword, Pageable pageable, Model model){
         pageable = PageRequest.of(Math.max(0, pageable.getPageNumber() -1), 21);
-        Page<ProductDTO> productList = productService.getAllProduct(pageable);
+        Page<ProductDTO> productList = productService.getAllProduct(keyword, pageable);
 
+        model.addAttribute("keyword", keyword);
         model.addAttribute("productList", productList);
         return "kream/kream";
     }
@@ -45,7 +46,7 @@ public class KreamController {
     public String registerPost(ProductDTO productDTO){
         productService.register(productDTO);
 
-        return "kream/kream";
+        return "redirect:/kream";
     }
 
     @GetMapping("/view")

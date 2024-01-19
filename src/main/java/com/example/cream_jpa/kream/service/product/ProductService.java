@@ -14,7 +14,7 @@ import java.util.Optional;
 public interface ProductService {
 
     void register(ProductDTO productDTO); // 상품등록
-    Page<ProductDTO> getAllProduct(Pageable pageable); // 상품목록 출력 ( 페이징 )
+    Page<ProductDTO> getAllProduct(String keyword, Pageable pageable); // 상품목록 출력 ( 페이징 )
     Optional<ProductDTO> getOne(Long pno); // 상품 상세
 
     void modifyOne(ProductDTO productDTO); // 상품 수정

@@ -34,7 +34,8 @@ dependencies {
     annotationProcessor "jakarta.persistence:jakarta.persistence-api"
     testImplementation 'org.assertj:assertj-core:3.24.2'
 
-
+    //thumbnail
+    implementation group: 'net.coobird', name: 'thumbnailator', version: '0.4.19'
 
     //시큐리티
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'

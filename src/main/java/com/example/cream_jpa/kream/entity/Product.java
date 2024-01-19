@@ -25,6 +25,8 @@ public class Product {
     @Column(nullable = false)
     private String productName; // 상품이름
 
+    @Column(nullable = false)
+    private String productImg; // 상품이미지
 
     @OneToMany(mappedBy = "product")
     @Builder.Default
