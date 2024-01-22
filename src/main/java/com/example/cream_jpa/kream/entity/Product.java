@@ -28,6 +28,9 @@ public class Product {
     @Column(nullable = false)
     private String productImg; // 상품이미지
 
+    @Column (columnDefinition = "Boolean default false")
+    private boolean isDel; // 삭제여부
+
     @OneToMany(mappedBy = "product")
     @Builder.Default
     private List<Sales_bid> sales_bids = new ArrayList<>();
@@ -43,7 +46,7 @@ public class Product {
         return productDTO;
     }
 
-    public void ChangeName(String productName){
-        this.productName = productName;
+    public void delete(){
+        this.isDel = true;
     }
 }

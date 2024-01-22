@@ -11,6 +11,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -151,5 +152,16 @@ public class ImageController {
         }
     }
 
-
+    @Scheduled(cron = "0 0 0 * * ?") // 매일 자정 temp폴더 비우기
+    private void deleteTemp(){
+        File folder = new File(tempPath);
+        if (folder.exists() && folder.isDirectory()){
+            File[] files = folder.listFiles();
+            if (files != null){
+                for (File file : files){
+                    file.delete();
+                }
+            }
+        }
+    }
 }

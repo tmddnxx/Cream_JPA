@@ -79,7 +79,7 @@ public class ProductServiceImpl implements ProductService{
             productPage = productRepository.PRODUCT_PAGE(keyword, pageable);
             log.info(" 검색 토탈 페이지 "+productPage.getTotalElements());
         }else {
-            productPage = productRepository.findAll(pageable);
+            productPage = productRepository.findAllByIsDelFalse(pageable);
             log.info("전체 갯수"+ productPage.getTotalElements());
         }
 
@@ -160,7 +160,12 @@ public class ProductServiceImpl implements ProductService{
 
     @Override // 상품삭제
     public void removeOne(Long pno) {
-        productRepository.deleteById(pno);
+        Optional<Product> product = productRepository.findById(pno);
+        if (product.isPresent()){
+            Product actualProduct = product.get();
+            actualProduct.delete();
+            productRepository.save(actualProduct);
+        }
     }
 
     @Override // 시세 보기

@@ -1,10 +1,8 @@
 package com.example.cream_jpa.member.entity;
 
+import com.example.cream_jpa.member.dto.MemberDTO;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -13,7 +11,7 @@ import java.util.Collection;
 
 @Entity
 @Getter
-@Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Member {
@@ -37,5 +35,15 @@ public class Member {
     @Column(columnDefinition = "VARCHAR(255) default 'user'")
     private String role = "user"; // 역할
 
+    public MemberDTO toDTO(){
+        MemberDTO memberDTO = new MemberDTO();
+        memberDTO.setMno(this.mno);
+        memberDTO.setMemberId(this.memberId);
+        memberDTO.setPasswd(this.passwd);
+        memberDTO.setNickname(this.nickname);
+        memberDTO.setEmail(this.email);
+        memberDTO.setRole(this.role);
 
+        return memberDTO;
+    }
 }

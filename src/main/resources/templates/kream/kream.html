@@ -7,6 +7,9 @@
     <title>Cream</title>
 </head>
 <style layout:fragment="style">
+    .regiBtnBox{
+        margin: 40px 40px -40px 0;
+    }
     .shop_area{
         margin: 40px 0;
     }
@@ -14,11 +17,12 @@
         display: grid;
         grid-template-columns: repeat(3, 1fr);
         grid-gap: 20px;
+        place-items: center;
     }
     .card-body{
         width: 350px;
-        min-height: 241px;
-        max-height: 300px;
+        min-height: 290px;
+        max-height: 290px;
         background-color: rgb(235, 240, 245);
         border-radius: 8px;
         border: 1px solid #e9ebee;
@@ -66,16 +70,18 @@
 <body>
 <div layout:fragment="content">
     <th:block th:if="${#authentication.principal != 'anonymousUser'}">
-        <span th:text="${#authentication.principal}"></span>
-        <a href="/kream/register">상품등록</a>
+        <p th:text="${#authentication.principal}"></p>
+        <div class="text-right regiBtnBox">
+            <a href="/kream/register" class="btn btn-secondary">상품등록</a>
+        </div>
     </th:block>
 
     <div class="shop_area">
         <h1 class="text-center mb-3">SHOP</h1>
         <!--    상품 목록-->
-        <div class="productList w-75">
+        <div class="productList w-100">
             <div class="card-body" th:each="list:${productList}">
-                <a th:href="@{/kream/view(pno=${list.pno})}">
+                <a th:href="@{/kream/view(pno=${list.pno})}" class="d-block h-100">
                     <div class="card-top pt-2 text-center">
                         <img th:src="|/img/productImg/${list.productImg[0]}|" width="200" alt="productImg">
                     </div>

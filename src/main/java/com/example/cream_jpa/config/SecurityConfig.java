@@ -1,6 +1,9 @@
 package com.example.cream_jpa.config;
 
+import com.example.cream_jpa.security.CustomUserDetailService;
+import com.example.cream_jpa.security.OAuth2UserService;
 import com.example.cream_jpa.security.handler.LoginFailureHandler;
+import com.example.cream_jpa.security.handler.SocialSuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,6 +19,9 @@ import java.nio.charset.StandardCharsets;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
+
+    private final CustomUserDetailService customUserDetailService;
+    private final OAuth2UserService oAuth2UserService;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -36,10 +42,14 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 // 커스텀 로그인 페이지
                 .formLogin(formLogin -> formLogin
+                                .loginPage("/login")
+                                .defaultSuccessUrl("/kream")
+                                .failureHandler(new LoginFailureHandler())
+                                .permitAll()
+                        // 카카오로그인
+                ).oauth2Login(oauthLogin -> oauthLogin
                         .loginPage("/login")
-                        .defaultSuccessUrl("/kream")
-                        .failureHandler(new LoginFailureHandler())
-                        .permitAll()
+                                .successHandler(new SocialSuccessHandler())
                         // 로그아웃 페이지
                 ).logout(logoutConfig ->
                         logoutConfig

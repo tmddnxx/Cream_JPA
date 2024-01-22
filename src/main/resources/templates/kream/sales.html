@@ -157,8 +157,8 @@
                             <h6 th:if="${tab == 'bid'}">판매 희망가</h6>
                             <h6 th:if="${tab == 'now'}">즉시 판매가</h6>
                             <div class="d-flex justify-content-center align-items-center">
-                                <input th:if="${tab == 'bid'}" type="text" name="salesPrice" class="input-product price" maxlength="13" autocomplete="off" placeholder="희망가 입력">
-                                <input th:if="${tab == 'now'}" type="text" th:text="${#numbers.formatDecimal(productDTO.purchasePrice, 0, 'COMMA', 0, 'POINT')}" th:value="${productDTO.purchasePrice}" name="salesPrice" class="input-product price" maxlength="13" autocomplete="off" readonly style="visibility: hidden">
+                                <input th:if="${tab == 'bid'}" type="text" name="salesPrice" class="input-product price" maxlength="9" autocomplete="off" placeholder="희망가 입력">
+                                <input th:if="${tab == 'now'}" type="text" th:text="${#numbers.formatDecimal(productDTO.purchasePrice, 0, 'COMMA', 0, 'POINT')}" th:value="${productDTO.purchasePrice}" name="salesPrice" class="input-product price" maxlength="10" autocomplete="off" readonly style="visibility: hidden">
                                 <h6>원</h6>
                             </div>
                             <div class="mt-5">
@@ -205,6 +205,7 @@
         value = Number(value.replaceAll(',', ''));
         const formatValue = value.toLocaleString('ko-KR');
         price.value = formatValue;
+
     })
 
     // 폼 제출할때

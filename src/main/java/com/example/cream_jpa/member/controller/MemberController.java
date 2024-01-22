@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequiredArgsConstructor
 public class MemberController {
     private  final MemberService memberService;
-
+    private final PasswordEncoder passwordEncoder;
 
     @GetMapping("/signup")
     public void signUp(){
@@ -27,13 +27,17 @@ public class MemberController {
     @PostMapping("/signup")
     public String signUpPost(MemberDTO memberDTO){
 
-        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         memberDTO.setPasswd(passwordEncoder.encode(memberDTO.getPasswd()));
         memberDTO.setRole("user");
         memberService.signUp(memberDTO);
         log.info("memberDTO ? "+memberDTO);
 
         return "redirect:/kream";
+    }
+
+    @GetMapping("/kakaoSignup") // 카카오 로그인 후 추가 닉네임, 비밀번호 받기
+    public void kakaoSignUp(MemberDTO memberDTO){
+
     }
 
 }

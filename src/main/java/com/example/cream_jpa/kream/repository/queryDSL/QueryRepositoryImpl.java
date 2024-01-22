@@ -124,7 +124,8 @@ public class QueryRepositoryImpl extends QuerydslRepositorySupport implements Qu
         // fetch() 메서드를 사용하여 JPAQueryFactory의 결과를 가져옵니다.
         List<Product> productList = jpaQueryFactory.select(qProduct) // qProduct 전체로 검색
                 .from(qProduct)
-                .where(predicate)
+                .where(predicate.
+                        and(qProduct.isDel.eq(false)))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();

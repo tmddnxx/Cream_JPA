@@ -19,7 +19,7 @@ public interface QueryRepository{
 
     int getQuote(Long pno, LocalDate buyDate); // 구매/판매 시세
 
-    Page<Product> PRODUCT_PAGE(String keyword, Pageable pageable);
+    Page<Product> PRODUCT_PAGE(String keyword, Pageable pageable); // 검색, 페이징
     
     void removeProductImg(String fileName, Long pno); // 수정페이지에서 기존 이미지 삭제시 DB에서 지워짐
 }

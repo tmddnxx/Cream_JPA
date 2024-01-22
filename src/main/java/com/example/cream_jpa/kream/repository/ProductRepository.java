@@ -12,4 +12,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long>, QueryRepository {
 
+    Page<Product> findAllByIsDelFalse(Pageable pageable);
 }

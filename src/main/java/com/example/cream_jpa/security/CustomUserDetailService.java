@@ -26,11 +26,12 @@ public class CustomUserDetailService implements UserDetailsService {
 
     private final MemberRepository memberRepository;
 
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<Member> member = memberRepository.findByMemberId(username); // view에서 전달받은 username(memberId)으로 회원 정보찾기
 
-        if(member == null){
+        if(member.isEmpty()){
             throw new UsernameNotFoundException("회원 정보가 없습니다");
         }
 

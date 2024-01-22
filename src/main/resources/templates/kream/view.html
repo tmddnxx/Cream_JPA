@@ -20,6 +20,7 @@
     .imgBox{
         background-color: rgb(235, 240, 245);
         padding: 2%;
+        height: 100%;
     }
     .mainImg{
         height: 80%;
@@ -71,6 +72,20 @@
         display: flex;
         flex-direction: column;
         justify-content: space-between;
+    }
+    .infoBox{
+        gap: 20px;
+    }
+    .infoBox p {
+        font-weight: normal;
+        color: rgba(34,34,34,.8);
+    }
+    .infoTitle {
+        font-size: 10pt;
+        color: rgba(34,34,34,.5);
+    }
+    .infoBoard{
+        border-right: 1px solid rgb(222, 226, 231);
     }
     .chartBox{
         border-top: 1px solid rgb(222, 226, 231);
@@ -185,13 +200,29 @@
                 <div class="top">
                     <p class="p-0 m-0">즉시 구매가</p>
                     <h4 th:text="${#numbers.formatDecimal(productDTO.salesPrice, 0, 'COMMA', 0, 'POINT')} + '원'"></h4>
-                    <p class="mt-2">[[${productDTO.productName}]]</p>
+                    <p class="mt-4">[[${productDTO.productName}]]</p>
                 </div>
-                <div class="info">
-                    <div class="infoBox">
-                        <p>상품정보1</p>
-                        <p>상품정보1</p>
-                        <p>상품정보1</p>
+                <div class="info mt-5">
+                    <div class="infoBox d-flex">
+                        <div>
+                            <p class="infoTitle">출시일</p>
+                            <p>24/01/22</p>
+                        </div>
+                        <div class="infoBoard"></div>
+                        <div>
+                            <p class="infoTitle">발매가</p>
+                            <p>189,000원</p>
+                        </div>
+                        <div class="infoBoard"></div>
+                        <div>
+                            <p class="infoTitle">모델번호</p>
+                            <p>FD0884-025</p>
+                        </div>
+                        <div class="infoBoard"></div>
+                        <div>
+                            <p class="infoTitle">대표 색상</p>
+                            <p>Photon Dust/Metailic Silver</p>
+                        </div>
                     </div>
                     <div class="chartBox">
                         <h5 class="mt-3">시세</h5>
