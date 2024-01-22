@@ -45,6 +45,7 @@
         flex-direction: column;
         padding: 10px 0 14px;
         margin-left: 20px;
+        margin-right: 20px;
     }
     .input-title{
         font-weight: 900;
@@ -82,6 +83,22 @@
         height: 52px;
         letter-spacing: -.16px;
     }
+    .imageLabel {
+        padding: 5px;
+        width: fit-content;
+        background-color: #f1f1f1;
+        border: 2px solid #9b9b9b;
+        border-radius: 5px;
+        font-weight: 700;
+    }
+    input[name=imageFile]{
+        display: none;
+    }
+    .thumbnailBox{
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        grid-gap: 10px;
+    }
 </style>
 <body>
 <div layout:fragment="content">
@@ -91,8 +108,12 @@
             <form action="/kream/register" method="post" name="registerFrm">
                 <input type="hidden" name="mno" th:value="${#authentication.principal.mno}">
                 <div class="input-box">
-                    <h6 class="input-title">이미지</h6>
-                    <input type="file" name="productImg" multiple onchange="uploadServer()">
+                    <label for="image" class="imageLabel">사진 올리기</label>
+                    <input type="file" name="imageFile" id="image" multiple onchange="upload()">
+                    <div class="imageToDB"></div>
+                    <div class="thumbnailBox">
+
+                    </div>
                 </div>
                 <div class="input-box">
                     <h6 class="input-title">상품이름</h6>
@@ -138,27 +159,86 @@
     }
 
     // 이미지 업로드
-    async function upload(url, formObj){
+    async function uploadToServer(url, formObj){
         const response = await axios.post(url, formObj)
 
         return response.data;
     }
+    // X버튼 누를때 temp 폴더에서 썸네일,본이미지 삭제
+    async function removeToServer(fileName){
 
+        const response = await axios.delete(`/img/removeTemp/${fileName}`);
 
-    function uploadServer(){
+        return response.data;
+    }
+
+    const thumbnailBox = document.querySelector('.thumbnailBox');
+
+    // input의 onchange 함수
+    function upload(){
         const formObj = new FormData();
-        const fileInput = document.querySelector('input[name=productImg]')
+        const fileInput = document.querySelector('input[name=imageFile]')
         const files = fileInput.files;
         console.log("files : " ,files);
         for (let i = 0; i<files.length; i++){
-            formObj.append("productImg", files[i])
+            formObj.append("imageFile", files[i])
         }
-        upload('/img/upload', formObj).then(result => {
+
+        uploadToServer('/img/upload', formObj).then(result => {
             console.log(result);
+            for (const uploadResult of result){
+                const str = `
+            <div class="img-thumbnail d-flex">
+                <div class="thumbnail-item">
+                    <div class="d-flex">
+                        <button type="button" class="btn-sm btn btn-danger w-100" onclick="removeImg('${uploadResult}', this)">X</button>
+                    </div>
+                    <div class="imgBox mt-1">
+                        <img src="/img/tempView/${uploadResult}" data-src="${uploadResult}">
+                    </div>
+                </div>
+            </div>`
+                thumbnailBox.innerHTML += str;
+            }
         })
     }
 
+    // 이미지 삭제
+    function removeImg(fileName, btn){
+        console.log(fileName);
+        if(!confirm('이미지를 삭제하시겠습니까?')){
+            return;
+        }else{
+            removeToServer(fileName).then(result => {
+                alert(result);
+            })
+            btn.closest('.img-thumbnail').remove();
+        }
+    }
+    // submit할때 uuid붙은 파일이름 보내기
+    const regiBtn = document.querySelector('.regiBtn');
+    const regiFrm = document.querySelector('form[name=registerFrm]');
+    regiBtn.addEventListener('click', function (e){
+        e.preventDefault();
+        e.stopPropagation();
 
+        const uploadFiles = thumbnailBox.querySelectorAll('img');
+        const imageToDB = document.querySelector('.imageToDB');
+        if (uploadFiles.length === 0 ){
+            alert('이미지를 등록하세요')
+            return;
+        }
+        let str = '';
+        for (let i=0; i<uploadFiles.length; i++){
+            const uploadFile = uploadFiles[i];
+            const imageFile = uploadFile.getAttribute('data-src');
+
+            str += `<input type='hidden' name='productImg' value="${imageFile}">`;
+        }
+        imageToDB.innerHTML = str;
+
+        regiFrm.submit();
+    })
 
 </script>
 </html>

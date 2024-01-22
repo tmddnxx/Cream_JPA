@@ -29,6 +29,22 @@
     padding-bottom: 46px;
     text-align: center;
   }
+  .imageLabel {
+    padding: 5px;
+    width: fit-content;
+    background-color: #f1f1f1;
+    border: 2px solid #9b9b9b;
+    border-radius: 5px;
+    font-weight: 700;
+  }
+  input[name=imageFile]{
+    display: none;
+  }
+  .thumbnailBox{
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    grid-gap: 10px;
+  }
   input{
     height: 38px;
     font-size: 15px;
@@ -92,8 +108,25 @@
         <input type="hidden" name="mno" th:value="${#authentication.principal.mno}">
         <input type="hidden" name="pno" th:value="${productDTO.pno}">
         <div class="input-box">
-          <h6 class="input-title">이미지</h6>
-          <input type="file">
+          <label for="image" class="imageLabel">사진 올리기</label>
+          <input type="file" name="imageFile" id="image" multiple onchange="upload()">
+          <div class="imageToDB"></div>
+          <div class="thumbnailBox">
+            <div class="img-thumbnail" th:each="imgList:${imgList}">
+              <input type="hidden" name="productImg" th:value="${imgList}">
+              <div class="thumbnail-item">
+                <div class="d-flex">
+                  <button type="button" class="btn-sm btn btn-danger w-100" th:onclick="removeImg([[${imgList}]], [[${productDTO.pno}]], this)">X</button>
+                </div>
+                <div class="imgBox mt-1">
+                  <img th:src="|/img/productImg/${imgList}|" th:data-src="${imgList}">
+                </div>
+              </div>
+            </div>
+            <div class="img-thumbnail plusImg">
+
+            </div>
+          </div>
         </div>
         <div class="input-box">
           <h6 class="input-title">상품이름</h6>
@@ -102,19 +135,33 @@
         <div class="input-box">
           <h6 class="input-title">상품가격</h6>
           <div class="d-flex">
-            <input type="text" name="salesPrice" class="input-product price" maxlength="13" autocomplete="off" placeholder="판매희망가" th:value="${productDTO.salesPrice}">
+            <input type="text" name="salesPrice" class="input-product price" maxlength="13" autocomplete="off" placeholder="판매희망가" th:value="${productDTO.salesPrice}" readonly>
             <h5>원</h5>
           </div>
         </div>
         <div>
-          <button type="submit" class="regiBtn" onclick="priceValue()">상품 등록</button>
+          <button type="submit" class="regiBtn" onclick="priceValue()">상품 수정</button>
         </div>
       </form>
     </div>
   </div>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </div>
 </body>
 <script layout:fragment="script" th:inline="javascript">
+
+  function resetBorder(){
+    const plusImgBoxes = document.querySelectorAll('.plusImg');
+    plusImgBoxes.forEach(plusImgBox => {
+      if (plusImgBox.querySelector('.thumbnail-item') === null){
+        plusImgBox.style.border = 'none';
+      }else {
+        plusImgBox.style.border = '';
+      }
+    })
+  }
+
+  resetBorder();
 
   // 가격에 콤마달기, 문자입력안되게
   const price = document.querySelector('.price');
@@ -136,6 +183,110 @@
   function priceValue(){
     price.value = Number(price.value.replace(/,/g, ''));
   }
+
+  // X버튼 누를때 product 폴더에서 썸네일,본이미지 삭제
+  async function removeToServer(fileName, pno){
+
+    const response = await axios.delete(`/img/removeProduct/${fileName}/${pno}`);
+
+    return response.data;
+  }
+  // X버튼 누를때 temp 폴더에서 썸네일,본이미지 삭제
+  async function removeTempToServer(fileName){
+
+      const response = await axios.delete(`/img/removeTemp/${fileName}`);
+
+      return response.data;
+  }
+  // 기존 이미지 삭제
+  function removeImg(fileName, pno,btn){
+    console.log(fileName);
+    if(!confirm('이미지를 삭제하시겠습니까?')){
+      return;
+    }else{
+      removeToServer(fileName, pno).then(result => {
+        alert(result);
+      })
+      btn.closest('.img-thumbnail').remove();
+    }
+  }
+  // 신규 이미지 삭제
+  function removeTempImg(fileName, btn){
+      console.log(fileName);
+      if(!confirm('이미지를 삭제하시겠습니까?')){
+          return;
+      }else{
+          removeTempToServer(fileName).then(result => {
+              alert(result);
+          })
+          btn.closest('.plusImg').remove();
+      }
+  }
+  // 이미지 업로드
+  async function uploadToServer(url, formObj){
+      const response = await axios.post(url, formObj)
+
+      return response.data;
+  }
+
+  // 신규이미지 담을 div
+  const plusImgBox = document.querySelector('.plusImg');
+  // 전체 이미지 담은 div
+  const thumbnailBox = document.querySelector('.thumbnailBox');
+
+  // input의 onchange 함수
+  function upload(){
+      const formObj = new FormData();
+      const fileInput = document.querySelector('input[name=imageFile]')
+      const files = fileInput.files;
+      console.log("files : " ,files);
+      for (let i = 0; i<files.length; i++){
+          formObj.append("imageFile", files[i])
+      }
+
+      uploadToServer('/img/upload', formObj).then(result => {
+          console.log(result);
+          for (const uploadResult of result){
+              const str = `
+                <div class="thumbnail-item">
+                    <div class="d-flex">
+                        <button type="button" class="btn-sm btn btn-danger w-100" onclick="removeTempImg('${uploadResult}', this)">X</button>
+                    </div>
+                    <div class="imgBox mt-1">
+                        <img src="/img/tempView/${uploadResult}" data-src="${uploadResult}">
+                    </div>
+                </div>`
+              plusImgBox.innerHTML += str;
+          }
+        resetBorder();
+      })
+  }
+
+  // submit할때 신규 이미지 담아서 보내기
+  const regiBtn = document.querySelector('.regiBtn');
+  const regiFrm = document.querySelector('form[name=registerFrm]');
+  regiBtn.addEventListener('click', function (e){
+    e.preventDefault();
+    e.stopPropagation();
+
+    const existImage = thumbnailBox.querySelector('img');
+    const uploadFiles = plusImgBox.querySelectorAll('img');
+    const imageToDB = document.querySelector('.imageToDB');
+    if (existImage.length === 0){
+      alert('이미지를 등록하세요')
+      return;
+    }
+    let str = '';
+    for (let i=0; i<uploadFiles.length; i++){
+      const uploadFile = uploadFiles[i];
+      const imageFile = uploadFile.getAttribute('data-src');
+
+      str += `<input type='hidden' name='productImg' value="${imageFile}">`;
+    }
+    imageToDB.innerHTML = str;
+
+    regiFrm.submit();
+  })
 
 </script>
 </html>

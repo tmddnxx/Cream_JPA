@@ -18,10 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -37,6 +34,7 @@ public class ProductServiceImpl implements ProductService{
     @Override
     @Transactional
     public void register(ProductDTO productDTO) { // 상품등록
+
         String productImg;
         List<String> files = productDTO.getProductImg();
         StringBuilder stringBuilder = new StringBuilder();
@@ -94,6 +92,11 @@ public class ProductServiceImpl implements ProductService{
         List<ProductDTO> productDTOList = productPage.getContent().stream()
                 .map(product -> {
                     ProductDTO productDTO = product.toDTO();
+
+                    String[] productImg = product.getProductImg().split(", "); // String 이미지 자르기
+                    List<String> productImgList = Arrays.asList(productImg); // 배열로 만듬
+
+                    productDTO.setProductImg(productImgList);
                     productDTO.setPurchasePrice(productRepository.getMaxPurchasePrice(product.getPno(), false));
                     productDTO.setSalesPrice(productRepository.getMinSalesPrice(product.getPno(), false));
                     return productDTO;
@@ -109,11 +112,18 @@ public class ProductServiceImpl implements ProductService{
     @Override
     public Optional<ProductDTO> getOne(Long pno) { // 상품상세
         Optional<Product> product = productRepository.findById(pno);
+
         ProductDTO productDTO = new ProductDTO();
+
+        String[] productImg = product.get().getProductImg().split(", ");
+        List<String> productImgList = Arrays.asList(productImg);
+
         productDTO.setPno(product.get().getPno());
+        productDTO.setProductImg(productImgList);
         productDTO.setProductName(product.get().getProductName());
         productDTO.setPurchasePrice(productRepository.getMaxPurchasePrice(product.get().getPno(), false));
         productDTO.setSalesPrice(productRepository.getMinSalesPrice(product.get().getPno(), false));
+
         return Optional.of(productDTO);
     }
 
@@ -121,11 +131,31 @@ public class ProductServiceImpl implements ProductService{
     public void modifyOne(ProductDTO productDTO) {
         // 주어진 ID로 엔터티 조회
         Optional<Product> optionalProduct = productRepository.findById(productDTO.getPno());
+        Product product = optionalProduct.get();
 
-        optionalProduct.ifPresent(product ->{
-            product.ChangeName(optionalProduct.get().getProductName());
-            productRepository.save(product);
-        });
+        String productImg;
+        List<String> files = productDTO.getProductImg();
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i=0; i < files.size(); i++){
+            String file = files.get(i);
+            stringBuilder.append(file);
+
+            if(i < files.size()-1){
+                stringBuilder.append(", ");
+            }
+        }
+
+        productImg = stringBuilder.toString();
+
+        // ProductDTO를 이용하여 Product 엔티티 생성
+        product = Product.builder()
+                .productImg(productImg)
+                .productName(productDTO.getProductName())
+                .pno(productDTO.getPno())
+                .build();
+
+        productRepository.save(product);
+
     }
 
     @Override // 상품삭제
@@ -232,5 +262,12 @@ public class ProductServiceImpl implements ProductService{
 
         return sales_bidDTOList;
     }
+
+    @Transactional
+    @Override
+    public void updateProductImg(String fileName, Long pno) {
+        productRepository.removeProductImg(fileName, pno);
+    }
+
 
 }

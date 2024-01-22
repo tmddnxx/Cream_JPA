@@ -21,14 +21,49 @@
         background-color: rgb(235, 240, 245);
         padding: 2%;
     }
-    .imgBox div{
-        height: 100%;
+    .mainImg{
+        height: 80%;
         width: 90%;
         margin: 0 auto;
+        border-bottom: 1px solid #939393;
     }
-    .imgBox img{
+    .mainImg img{
         height: 100%;
         width: 100%;
+    }
+    .sImgList{
+        width: 90%;
+        height: fit-content;
+        margin: 0 auto;
+        overflow: hidden;
+        position: relative;
+    }
+    .img-wrapper{
+        display: flex;
+        transition: transform 0.5s ease;
+    }
+    .next{
+        color: black;
+        position: absolute;
+        top: 41px;
+        right: 0;
+        cursor: pointer;
+        z-index: 3;
+    }
+    .prev{
+        color: black;
+        position: absolute;
+        top: 41px;
+        left: 0;
+        cursor: pointer;
+        z-index: 3;
+    }
+    .img-item{
+        height: 100px;
+        margin-right: 10px;
+        border: 1px solid #939393;
+        border-radius: 5px;
+        cursor: pointer;
     }
     .inner-right{
         border-left: 1px solid rgb(222, 226, 231);
@@ -133,8 +168,17 @@
     <div layout:fragment="content">
         <div class="inner d-flex" th:with="productDTO=${productDTO}">
             <div class="imgBox w-50">
-                <div>
-                    <img src="https://image-cdn.hypb.st/https%3A%2F%2Fkr.hypebeast.com%2Ffiles%2F2022%2F01%2FNike-air-force-1-flax-official-release-info-ft.jpg?">
+                <div class="mainImg pb-2">
+                    <img th:src="|/img/productImg/${productDTO.productImg[0]}|" id="mainImg" alt="productImg">
+                </div>
+                <div class="sImgList mt-4 d-flex justify-content-center">
+                    <span th:if="${imgList.size() > 4}" class="prev" onclick="plusSlides(-1)">&#10094;</span>
+                    <div class="img-wrapper">
+                        <div class="img-item" th:each="imgList:${imgList}">
+                            <img th:src="|/img/productImg/${imgList}|" alt="productImg" th:data-index="${imgListStat.count}" onclick="displayImg(this)">
+                        </div>
+                    </div>
+                    <span th:if="${imgList.size() > 4}" class="next" onclick="plusSlides(1)">&#10095;</span>
                 </div>
             </div>
             <div class="inner-right w-50">
@@ -208,17 +252,61 @@
                 </div>
             </div>
         </div>
-<!--        수정/삭제 기능 없음-->
-<!--        <th:block th:if="${#authentication.principal != 'anonymousUser'}">-->
-<!--            <div class="ownBtn_box mb-4" th:if="${productDTO.mno == #authentication.principal.mno}">-->
-<!--                <a class="modifyBtn ownBtn" th:href="@{/kream/modify(pno=${productDTO.pno})}">수정</a>-->
-<!--                <a class="removeBtn ownBtn" th:href="@{/kream/remove(pno=${productDTO.pno})}">삭제</a>-->
-<!--            </div>-->
-<!--        </th:block>-->
+
+            <div class="ownBtn_box mb-4">
+                <a class="modifyBtn ownBtn" th:href="@{/kream/modify(pno=${productDTO.pno})}">수정</a>
+                <a class="removeBtn ownBtn" th:href="@{/kream/remove(pno=${productDTO.pno})}">삭제</a>
+            </div>
+
     </div>
 </body>
 
 <script layout:fragment="script" th:inline="javascript">
+
+    const imgItems = document.querySelectorAll('.img-item');
+    let imgIndex;
+    let img;
+
+    for (const imgItem of imgItems) {
+        img = imgItem.querySelector('img');
+        imgIndex = parseInt(img.getAttribute('data-index'));
+
+        if (imgIndex > 4) {
+            imgItem.style.display = 'none';
+        }
+    }
+
+    function displayImg(clickedImage) {
+        document.getElementById('mainImg').src = clickedImage.src;
+    }
+
+    let currentIndex = 0;
+    let imgWrapper = document.querySelector('.img-wrapper');
+
+    function plusSlides(n) {
+        currentIndex += n;
+        if (currentIndex < 0) {
+            currentIndex = 0;
+        } else if (currentIndex > imgItems.length - 4) {
+            currentIndex = imgItems.length - 4;
+        }
+        updateSlide();
+        console.log(currentIndex);
+    }
+
+    function updateSlide() {
+        let translateValue = -currentIndex * 0.1; // 이미지 너비(100px) + 마진(10px)
+        imgWrapper.style.transform = 'translateX(' + translateValue + 'px)';
+
+        // 현재 인덱스를 기준으로 4개의 이미지만을 보이도록 처리
+        for (let i = 0; i < imgItems.length; i++) {
+            imgItems[i].style.display = 'none'; // 일단 모든 이미지를 숨김
+            if (i >= currentIndex && i < currentIndex + 4) {
+                imgItems[i].style.display = 'block'; // 현재 인덱스 기준으로 4개의 이미지만을 보이도록 처리
+            }
+        }
+    }
+
 
     const quoteList = [[${quoteList}]];
     console.log(quoteList[0]);

@@ -29,4 +29,5 @@ public interface ProductService {
     List<Purchase_bidDTO> recentPurchasePrices(Long pno); // 최근 구매거래가
     List<Sales_bidDTO> recentSalesPrices(Long pno); // 최근 구매거래가
 
+    void updateProductImg(String fileName, Long pno); // 수정view에서 기존 이미지 삭제시 DB에서 지움
 }

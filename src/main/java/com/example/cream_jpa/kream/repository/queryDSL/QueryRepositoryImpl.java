@@ -6,7 +6,7 @@ import com.example.cream_jpa.kream.entity.QSales_bid;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.Template;
-import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.*;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
@@ -15,6 +15,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.expression.common.ExpressionUtils;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -136,6 +137,24 @@ public class QueryRepositoryImpl extends QuerydslRepositorySupport implements Qu
 
         // 가져온 결과를 Page 객체로 변환하여 반환합니다.
         return new PageImpl<>(productList, pageable, total);
+    }
+
+    @Transactional
+    @Override
+    public void removeProductImg(String fileName, Long pno) {
+        QProduct qProduct = QProduct.product;
+        CaseBuilder caseBuilder = new CaseBuilder();
+
+        jpaQueryFactory.update(qProduct)
+                .set(qProduct.productImg,
+                        caseBuilder.when(qProduct.productImg.like("%"+fileName+", "+"%"))
+                                .then(Expressions.stringTemplate("REPLACE({0}, {1}, '')", qProduct.productImg, fileName+", "))
+                                .when(qProduct.productImg.like("%"+fileName+"%"))
+                                .then(Expressions.stringTemplate("REPLACE({0}, {1}, '')", qProduct.productImg, fileName))
+                                .otherwise(qProduct.productImg)
+                                )
+                .where(qProduct.pno.eq(pno))
+                .execute();
     }
 
 
