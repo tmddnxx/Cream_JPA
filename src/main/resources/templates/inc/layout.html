@@ -179,6 +179,7 @@
         letter-spacing: -.07px;
         font-size: 12px;
     }
+
 </style>
 <th:block layout:fragment="style">
 
@@ -190,6 +191,7 @@
             <div class="top-inner">
                 <ul class="top-list d-flex ">
                     <li th:if="${#authentication.principal == 'anonymousUser'}" class="top-item"><a href="/login">로그인</a></li>
+                    <li th:unless="${#authentication.principal == 'anonymousUser'}" class="top-item"><a href="/myPage">마이페이지</a></li>
                     <li th:unless="${#authentication.principal == 'anonymousUser'}" class="top-item"><a href="/logout">로그아웃</a></li>
                     <li th:if="${#authentication.principal == 'anonymousUser'}" class="top-item"><a href="/member/signup">회원가입</a></li>
                 </ul>

@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{inc/layout.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>마이페이지</title>
+</head>
+<style layout:fragment="style">
+    .container{
+        width: 80%;
+        padding: 0;
+    }
+    p{
+        margin: 0;
+    }
+    .wrap{
+        min-height: 500px;
+    }
+    .sideNav{
+        width: 20%;
+    }
+    .img-fluid{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #a6a6a6;
+        border-radius: 100%;
+        flex-shrink: 0;
+        height: 100px;
+        margin-right: 12px;
+        position: relative;
+        width: 100px;
+    }
+    .myPageTitle{
+        font-size: 24px;
+        font-weight: 700;
+        letter-spacing: -.15px;
+        line-height: 29px;
+        padding-bottom: 30px;
+    }
+    .main{
+        width: 80%;
+    }
+    .menu-item{
+        color: rgba(34,34,34,.5);
+        font-size: 15px;
+        letter-spacing: -.15px;
+        line-height: 18px;
+    }
+
+    .userInfo{
+        border: 1px solid #ebebeb;
+        border-radius: 10px;
+        display: flex;
+        padding: 23px 0 23px 23px;
+    }
+    .memberId{
+        color: rgba(34,34,34,.5);
+        font-size: 14px;
+        letter-spacing: -.05px
+    }
+    .subTitle{
+        display: flex;
+        justify-content: space-between;
+        margin-top: 42px;
+        padding-bottom: 16px;
+    }
+    .subTitle h3{
+        font-size: 18px;
+        letter-spacing: -.27px;
+    }
+    .purchase-tab{
+        display: flex;
+        justify-content: space-evenly;
+        align-items: center;
+        min-height: 90px;
+        background-color: #fafafa;
+        border-radius: 12px;
+        width: 100%;
+    }
+    .sales-tab{
+        display: flex;
+        justify-content: space-evenly;
+        align-items: center;
+        min-height: 90px;
+        background-color: #fafafa;
+        border-radius: 12px;
+        width: 100%;
+    }
+    .tab-item{
+        text-align: center;
+        flex: 1;
+    }
+    .item-title{
+        color: rgba(34,34,34,.8);
+        font-size: 13px;
+        letter-spacing: -.07px;
+    }
+    .item-count{
+        font-size: 18px;
+        font-weight: 700;
+        letter-spacing: -.09px;
+        line-height: 20px;
+        margin-top: 2px;
+    }
+    .purchase-list{
+        min-height: 300px;
+    }
+    .purchase-list-item{
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid #ebebeb;
+        cursor: pointer;
+        display: flex;
+        padding: 12px;
+    }
+    .sales-list{
+        min-height: 300px;
+    }
+    .sales-list-item{
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid #ebebeb;
+        cursor: pointer;
+        display: flex;
+        padding: 12px;
+    }
+    .list-item-product{
+        display: flex;
+    }
+    .item-img{
+        background-color: rgb(244, 244, 244);
+        border-radius: 12px;
+        object-fit: cover;
+    }
+    .item-name{
+        font-size: 15px;
+        display: flex;
+        align-items: center;
+        margin-left: 16px;
+    }
+    .noList{
+        height: 200px;
+    }
+    .noList p {
+        color: rgba(34,34,34,.5);
+        font-size: 13px;
+        letter-spacing: -.07px;
+    }
+</style>
+<body>
+    <div layout:fragment="content">
+        <div class="wrap mt-5 d-flex">
+            <div class="sideNav d-flex flex-column gap-4">
+                <a href="/myPage" class="myPageTitle">마이 페이지</a>
+                <div class="sub-menu">
+                    <h5>쇼핑 정보</h5>
+                    <ul>
+                        <li><a href="/myPage/buying" class="menu-item">구매 내역</a></li>
+                        <li><a href="/myPage/selling" class="menu-item">판매 내역</a></li>
+                    </ul>
+                </div>
+                <div class="sub-menu">
+                    <h5>내 정보</h5>
+                    <ul>
+                        <li><a href="#" class="menu-item">로그인 정보</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="main">
+                <div class="userInfo">
+                    <div class="img-fluid">
+                        <img src="https://cdn-icons-png.flaticon.com/512/3171/3171065.png" width="80">
+                    </div>
+                    <div>
+                        <p class="font-weight-bold">[[${memberDTO.nickname}]]</p>
+                        <p class="memberId"></p>
+                    </div>
+                </div>
+                <div class="subTitle">
+                    <h3>구매 내역</h3>
+                    <a href="/myPage/buying" class="btn-more">더보기 ></a>
+                </div>
+                <div class="purchase">
+                    <div class="purchase-tab">
+                        <div class="tab-item total">
+                            <p class="item-title">전체</p>
+                            <p class="item-count" style="color: #f15746">[[${allPurchaseBid}]]</p>
+                        </div>
+                        <div class="tab-item ing">
+                            <p class="item-title">진행중</p>
+                            <p class="item-count">[[${falsePurchaseBid}]]</p>
+                        </div>
+                        <div class="tab-item finish">
+                            <p class="item-title">종료</p>
+                            <p class="item-count">[[${truePurchaseBid}]]</p>
+                        </div>
+                    </div>
+                    <div class="purchase-list">
+                        <div class="purchase-list-item" th:each="purchaseList:${purchaseList}">
+                            <div class="list-item-product">
+                                <div class="item-img">
+                                    <img th:src="|/img/productImg/${purchaseList.productImg[0]}|" alt="productImg">
+                                </div>
+                                <div class="item-name">
+                                    <p th:text="${purchaseList.productName}"></p>
+                                </div>
+                            </div>
+                            <div class="list-item-status">
+                                <p th:text="${purchaseList.bidDate}"></p>
+                            </div>
+                        </div>
+                        <div th:if="${purchaseList.size() == 0}" class="d-flex justify-content-center align-items-center noList">
+                            <p>거래 내역이 없습니다.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="subTitle">
+                    <h3>판매 내역</h3>
+                    <a href="/myPage/selling" class="btn-more">더보기 ></a>
+                </div>
+                <div class="sales">
+                    <div class="sales-tab">
+                        <div class="tab-item total">
+                            <p class="item-title">전체</p>
+                            <p class="item-count" style="color: #f15746">[[${allSalesBid}]]</p>
+                        </div>
+                        <div class="tab-item ing">
+                            <p class="item-title">진행중</p>
+                            <p class="item-count">[[${falseSalesBid}]]</p>
+                        </div>
+                        <div class="tab-item finish">
+                            <p class="item-title">종료</p>
+                            <p class="item-count">[[${trueSalesBid}]]</p>
+                        </div>
+                    </div>
+                    <div class="sales-list">
+                        <div class="sales-list-item" th:each="salesList:${salesList}">
+                            <div class="list-item-product">
+                                <div class="item-img">
+                                    <img th:src="|/img/productImg/${salesList.productImg[0]}|" alt="salesImg">
+                                </div>
+                                <div class="item-name">
+                                    <p th:text="${salesList.productName}"></p>
+                                </div>
+                            </div>
+                            <div class="list-item-status">
+                                <p th:text="${salesList.bidDate}"></p>
+                            </div>
+                        </div>
+                        <div th:if="${salesList.size() == 0 }" class="d-flex justify-content-center align-items-center noList">
+                                <p>거래 내역이 없습니다.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script layout:fragment="script" th:inline="javascript">
+        // 아이디 별표처리
+        const originalUsername = [[${memberDTO.memberId}]];
+
+        // 몇 글자를 가릴지 정하기 (예시로 처음 두 글자와 마지막 글자는 그대로 두고 나머지는 가림)
+        const visibleCharacters = 1;
+        const hiddenCharacters = originalUsername.length - 1;
+
+        // 사용자 아이디 일부 가리기
+        const maskedUsername = originalUsername.substring(0, visibleCharacters) + "*".repeat(hiddenCharacters) + originalUsername.slice(-1);
+
+        // 결과를 HTML에 추가
+        document.querySelector(".memberId").innerHTML = maskedUsername;
+
+
+</script>
+</html>

@@ -22,4 +22,7 @@ public interface SalesBidRepository extends JpaRepository<Sales_bid, Long>{
 
     List<Sales_bid> findByIsBuyFalseAndBidDateBefore(LocalDateTime thirtyDaysAgo); // 30일이 경과한 입찰되지 않은 레코드 목록 -> 삭제
 
+    int countSales_bidByMno(Long mno); // 특정회원의 판매입찰 전체 찾기
+    int countSales_bidByMnoAndIsBuyFalse(Long mno); // 특정회원 판매입찰 진행중 찾기
+    int countSales_bidByMnoAndIsBuyTrue(Long mno); // 특정회원 판매입찰 완료 찾기
 }

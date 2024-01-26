@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{inc/layout.html}">
+<head>
+  <meta charset="UTF-8">
+  <title>구매내역</title>
+</head>
+<style layout:fragment="style">
+  p{
+    margin: 0;
+  }
+  .wrap{
+    min-height: 500px;
+  }
+  .sideNav{
+    width: 20%;
+  }
+  .main{
+    width: 80%;
+  }
+  .myPageTitle{
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -.15px;
+    line-height: 29px;
+    padding-bottom: 30px;
+  }
+  .menu-item{
+    color: rgba(34,34,34,.5);
+    font-size: 15px;
+    letter-spacing: -.15px;
+    line-height: 18px;
+  }
+</style>
+<body>
+<div layout:fragment="content">
+  <div class="wrap mt-5 d-flex">
+    <div class="sideNav d-flex flex-column gap-4">
+      <a href="/myPage" class="myPageTitle">마이 페이지</a>
+      <div class="sub-menu">
+        <h5>쇼핑 정보</h5>
+        <ul>
+          <li><a href="/myPage/buying" class="menu-item">구매 내역</a></li>
+          <li><a href="/myPage/selling" class="menu-item">판매 내역</a></li>
+        </ul>
+      </div>
+      <div class="sub-menu">
+        <h5>내 정보</h5>
+        <ul>
+          <li><a href="#" class="menu-item">로그인 정보</a></li>
+        </ul>
+      </div>
+    </div>
+
+
+  </div>
+</div>
+</body>
+</html>

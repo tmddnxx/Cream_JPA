@@ -232,16 +232,16 @@ public class ProductServiceImpl implements ProductService{
         }
     }
 
-    @Scheduled(cron = "0 0 0 * * ?") // 매일 자정 실행
-    @Override // 30일이 지난 입찰되지않은 레코드 삭제
-    public void deleteOldRecord() {
-        LocalDateTime thirtyDaysAgo = LocalDateTime.now().minusDays(30);
-        List<Purchase_bid> purchase_bids = purchaseBidRepository.findByIsBuyFalseAndBidDateBefore(thirtyDaysAgo);
-        List<Sales_bid> sales_bids = salesBidRepository.findByIsBuyFalseAndBidDateBefore(thirtyDaysAgo);
-
-        purchaseBidRepository.deleteAll(purchase_bids);
-        salesBidRepository.deleteAll(sales_bids);
-    }
+//    @Scheduled(cron = "0 0 0 * * ?") // 매일 자정 실행
+//    @Override // 30일이 지난 입찰되지않은 레코드 삭제
+//    public void deleteOldRecord() {
+//        LocalDateTime thirtyDaysAgo = LocalDateTime.now().minusDays(30);
+//        List<Purchase_bid> purchase_bids = purchaseBidRepository.findByIsBuyFalseAndBidDateBefore(thirtyDaysAgo);
+//        List<Sales_bid> sales_bids = salesBidRepository.findByIsBuyFalseAndBidDateBefore(thirtyDaysAgo);
+//
+//        purchaseBidRepository.deleteAll(purchase_bids);
+//        salesBidRepository.deleteAll(sales_bids);
+//    }
 
     @Override // 최근 구매가 5개
     public List<Purchase_bidDTO> recentPurchasePrices(Long pno) {

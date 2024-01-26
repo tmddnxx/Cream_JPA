@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{inc/layout.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>구매내역</title>
+</head>
+<style layout:fragment="style">
+    p{
+        margin: 0;
+    }
+    .wrap{
+        min-height: 500px;
+    }
+    .sideNav{
+        width: 20%;
+    }
+    .main{
+        width: 80%;
+    }
+    .myPageTitle{
+        font-size: 24px;
+        font-weight: 700;
+        letter-spacing: -.15px;
+        line-height: 29px;
+        padding-bottom: 30px;
+    }
+    .menu-item{
+        color: rgba(34,34,34,.5);
+        font-size: 15px;
+        letter-spacing: -.15px;
+        line-height: 18px;
+    }
+    .purchase_title{
+        font-size: 24px;
+        font-weight: 700;
+        letter-spacing: -.15px;
+    }
+    .purchase-tab{
+        display: flex;
+        justify-content: space-evenly;
+        align-items: center;
+        min-height: 90px;
+        width: 100%;
+        border-bottom: 1px solid #ebebeb;
+        cursor: pointer;
+    }
+    .tab-item{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        flex: 1;
+        min-height: 90px;
+    }
+    .item-title{
+        color: rgba(34,34,34,.8);
+        font-size: 13px;
+        letter-spacing: -.07px;
+    }
+    .item-count{
+        font-size: 18px;
+        font-weight: 700;
+        letter-spacing: -.09px;
+        line-height: 20px;
+        margin-top: 2px;
+    }
+    .period_search{
+        background-color: #fafafa;
+        border-bottom: 1px solid #ebebeb;
+        display: flex;
+        justify-content: center;
+        padding: 14px;
+    }
+    .period_month{
+        margin-right: 20px;
+    }
+    .month_list{
+        display: flex;
+        gap: 10px;
+        margin: 0;
+    }
+    .month_link{
+        background-color: #fff;
+        border: 1px solid #ebebeb;
+        color: rgba(34,34,34,.8);
+        display: flex;
+        font-size: 13px;
+        height: 32px;
+        justify-content: center;
+        letter-spacing: -.07px;
+        line-height: 30px;
+        min-width: 62px;
+        padding: 0 12px;
+    }
+    .search_info{
+        padding: 12px 0;
+    }
+    .info_item{
+        color: rgba(34,34,34,.5);
+        font-size: 12px;
+        letter-spacing: -.06px;
+        padding-left: 7px;
+        position: relative;
+    }
+    .info_item:before{
+        background-color: rgba(34,34,34,.5);
+        border-radius: 50%;
+        content: "";
+        height: 3px;
+        left: 0;
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 3px;
+    }
+    .purchase_list{
+        border-top: 1px solid #ebebeb;
+        min-height: 300px;
+    }
+    .purchase-list-item{
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid #ebebeb;
+        cursor: pointer;
+        display: flex;
+        padding: 12px;
+    }
+    .list-item-product{
+        display: flex;
+    }
+    .item-img{
+        background-color: rgb(244, 244, 244);
+        border-radius: 12px;
+        object-fit: cover;
+    }
+    .item-name{
+        font-size: 15px;
+        display: flex;
+        align-items: center;
+        margin-left: 16px;
+    }
+    .noList{
+        height: 200px;
+    }
+    .noList p {
+        color: rgba(34,34,34,.5);
+        font-size: 13px;
+        letter-spacing: -.07px;
+    }
+    .calender{
+        padding: 5px;
+        text-align: center;
+        border: 1px solid #ebebeb;
+        color: rgba(34,34,34,.8);
+        font-size: 13px;
+    }
+    .btn_search_wrap{
+        margin-left: 4px;
+    }
+    .search_btn{
+        background-color: #222;
+        border: 1px solid #d3d3d3;
+        color: #fff;
+        cursor: pointer;
+        font-size: 13px;
+        height: 32px;
+        letter-spacing: -.07px;
+        line-height: 30px;
+        padding: 0 16px;
+    }
+    .tab_border_bottom{
+        border-bottom: 2px solid black;
+    }
+    /*페이징*/
+    .pagination {
+        display: flex;
+        justify-content: center;
+        margin: 40px 0;
+    }
+
+    .pagination ul {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .pagination li {
+        display: inline-block;
+        margin-right: 5px;
+    }
+
+    .pagination a {
+        text-decoration: none;
+        padding: 8px 12px;
+        border: 1px solid #ccc;
+        color: #333;
+        cursor: pointer;
+    }
+
+    .pagination .active {
+        background-color: #5b5b5b;
+        color: white !important;
+        border: 1px solid #5b5b5b;
+    }
+
+    .pagination a:hover {
+        background-color: #ddd;
+        border: 1px solid #ddd;
+        color: #333 !important;
+    }
+</style>
+<body>
+    <div layout:fragment="content">
+        <div class="wrap mt-5 d-flex">
+            <div class="sideNav d-flex flex-column gap-4">
+                <a href="/myPage" class="myPageTitle">마이 페이지</a>
+                <div class="sub-menu">
+                    <h5>쇼핑 정보</h5>
+                    <ul>
+                        <li><a href="/myPage/buying" class="menu-item">구매 내역</a></li>
+                        <li><a href="/myPage/selling" class="menu-item">판매 내역</a></li>
+                    </ul>
+                </div>
+                <div class="sub-menu">
+                    <h5>내 정보</h5>
+                    <ul>
+                        <li><a href="#" class="menu-item">로그인 정보</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="main">
+                <div class="my_purchase">
+                    <div class="purchase_title">
+                        <h3>구매 내역</h3>
+                    </div>
+                    <div class="purchase-tab">
+                        <div class="tab-item total" th:classappend="${type == 'all'} ? 'tab_border_bottom' : ''">
+                            <p class="item-count" style="color: #f15746">[[${allPurchaseBid}]]</p>
+                            <p class="item-title">전체</p>
+                        </div>
+                        <div class="tab-item ing" th:classappend="${type == 'ing'} ? 'tab_border_bottom' : ''">
+                            <p class="item-count">[[${falsePurchaseBid}]]</p>
+                            <p class="item-title">진행중</p>
+                        </div>
+                        <div class="tab-item finish" th:classappend="${type == 'finished'} ? 'tab_border_bottom' : ''">
+                            <p class="item-count">[[${truePurchaseBid}]]</p>
+                            <p class="item-title">체결완료</p>
+                        </div>
+                    </div>
+                    <div class="period_search">
+                        <div class="period_month">
+                            <ul class="month_list">
+                                <li class="month_item month2"><a class="month_link">최근 2개월</a></li>
+                                <li class="month_item month4"><a class="month_link">4개월</a></li>
+                                <li class="month_item month6"><a class="month_link">6개월</a></li>
+                            </ul>
+                        </div>
+                        <div class="period_calender">
+                            <form action="/myPage/buying" method="get" name="periodFrm" class="d-flex">
+                                <input type="hidden" name="type" th:value="${type}">
+                                <input type="hidden" name="page" th:value="${page}">
+                                <div class="calender_wrap">
+                                    <input type="date" class="calender" name="searchToDate" th:value="${searchToDate}">
+                                    <span>~</span>
+                                    <input type="date" class="calender" name="searchFromDate" th:value="${searchFromDate}">
+                                </div>
+                                <div class="btn_search_wrap">
+                                    <button type="submit" class="search_btn">조회</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <ul class="search_info">
+                        <li class="info_item">
+                            <p class="info_text">한번에 조회 가능한 기간은 최대 6개월입니다.</p>
+                        </li>
+                        <li class="info_item">
+                            <p class="info_text">기간별 조회 결과는 입찰일 기준으로 노출됩니다.</p>
+                        </li>
+                    </ul>
+                    <div class="purchase_list">
+                        <div class="purchase-list-item" th:each="purchaseList:${purchaseList}">
+                            <div class="list-item-product">
+                                <div class="item-img">
+                                    <img th:src="|/img/productImg/${purchaseList.productImg[0]}|" alt="productImg">
+                                </div>
+                                <div class="item-name">
+                                    <p th:text="${purchaseList.productName}"></p>
+                                </div>
+                            </div>
+                            <div class="list-item-status">
+                                <p th:text="${purchaseList.bidDate}"></p>
+                            </div>
+                        </div>
+                        <div th:if="${purchaseList.totalElements == 0}" class="d-flex justify-content-center align-items-center noList">
+                            <p>거래 내역이 없습니다.</p>
+                        </div>
+                    </div>
+
+                    <!-- 페이징 -->
+                    <div th:if="${purchaseList.totalPages >= 1}" class="pagination">
+                        <ul>
+                            <li th:each="i : ${#numbers.sequence(1, purchaseList.totalPages)}" class="paging">
+                                <a th:data-num="${i}" th:text="${i}" th:class="${i == purchaseList.number+1 ? 'active' : ''}"></a>
+                            </li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script layout:fragment="script" th:inline="javascript">
+    const month2 = document.querySelector('.month2');
+    const month4 = document.querySelector('.month4');
+    const month6 = document.querySelector('.month6');
+    const periodFrm = document.querySelector('form[name=periodFrm]');
+    const inputToDate = document.querySelector('input[name=searchToDate]');
+    const inputFromDate = document.querySelector('input[name=inputFromDate]');
+
+    // 날짜버튼 (2,4,6개월전)
+    function setPeriodAgo(monthAgo) {
+        const today = new Date();
+        const targetDate = new Date();
+        targetDate.setMonth(today.getMonth() - monthAgo);
+
+        const year = targetDate.getFullYear();
+        const month = (targetDate.getMonth() + 1).toString().padStart(2, '0');
+        const day = targetDate.getDate().toString().padStart(2, '0');
+
+        const formattedDate = `${year}-${month}-${day}`;
+        inputToDate.value = formattedDate;
+        periodFrm.submit();
+    }
+
+    month2.addEventListener('click', function (){
+        setPeriodAgo(2);
+    })
+    month4.addEventListener('click', function (){
+        setPeriodAgo(4);
+    })
+    month6.addEventListener('click', function (){
+        setPeriodAgo(6);
+    })
+
+    // 전체, 진행중, 체결완료
+    const allBtn = document.querySelector('.total');
+    const ingBtn = document.querySelector('.ing');
+    const finishBtn = document.querySelector('.finish');
+    const type = document.querySelector('input[name=type]');
+    allBtn.addEventListener('click', function (){
+        type.value = "all";
+        periodFrm.submit();
+    })
+    ingBtn.addEventListener('click', function (){
+        type.value = "ing";
+        periodFrm.submit();
+    })
+    finishBtn.addEventListener('click', function (){
+        type.value = "finished";
+        periodFrm.submit();
+    })
+
+    // 페이징
+    const pagings = document.querySelectorAll('.paging');
+    const page = document.querySelector('input[name=page]');
+
+    pagings.forEach(paging => {
+        paging.addEventListener('click', function (){
+            const pageNum = paging.querySelector('a').getAttribute('data-num');
+            console.log(pageNum);
+            page.value = pageNum;
+            periodFrm.submit();
+        })
+    })
+
+</script>
+</html>

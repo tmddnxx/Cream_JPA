@@ -58,7 +58,9 @@ dependencies {
     // 롬복
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
-
+    // lombok을 테스트 환경에서도 사용.
+    testCompileOnly('org.projectlombok:lombok')
+    testAnnotationProcessor('org.projectlombok:lombok')
 }
 
 tasks.named('test') {

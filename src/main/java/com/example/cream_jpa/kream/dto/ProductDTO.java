@@ -24,6 +24,7 @@ public class ProductDTO {
 
     private String productName; // 상품이름
 
+    @Builder.Default
     private List<String> productImg = new ArrayList<>(); // 상품 이미지 List
 
     private int salesPrice; // 판매자 초기설정 가격
