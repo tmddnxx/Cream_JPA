@@ -111,4 +111,11 @@ public class MemberServiceImpl implements MemberService{
         return productRepository.allPurchaseList_lt6(mySearchDTO, pageable, mno);
     }
 
+    @Override
+    public Page<MyProductDTO> allSales_lt6(MySearchDTO mySearchDTO, Pageable pageable, Long mno) {
+        pageable = PageRequest.of(Math.max(0, pageable.getPageNumber() -1), 5);
+
+        return productRepository.allSalesList_lt6(mySearchDTO, pageable, mno);
+    }
+
 }

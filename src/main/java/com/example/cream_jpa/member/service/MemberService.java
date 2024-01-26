@@ -31,4 +31,5 @@ public interface MemberService {
     List<MyProductDTO> salesTop3List(Long mno); // 마이페이지 판매입찰내역 3개 List
     
     Page<MyProductDTO> allPurchase_lt6(MySearchDTO mySearchDTO, Pageable pageable, Long mno); // 특정회원 모든 구매입찰내역(6개월전)
+    Page<MyProductDTO> allSales_lt6(MySearchDTO mySearchDTO, Pageable pageable, Long mno); // 특정회원 모든 판매입찰내역(6개월전)
 }

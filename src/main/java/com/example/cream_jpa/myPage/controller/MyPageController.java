@@ -87,4 +87,26 @@ public class MyPageController {
         model.addAttribute("page", pageNum);
     }
 
+    @GetMapping("/selling")
+    public void selling(Model model, @AuthenticationPrincipal MemberDTO memberDTO, MySearchDTO mySearchDTO, Pageable pageable){
+        // 판매내역
+        int allSalesBid = memberService.countAllSalesBidByMno(memberDTO.getMno());
+        model.addAttribute("allSalesBid", allSalesBid); // 판매입찰 내역 전체갯수
+
+        int falseSalesBid = memberService.countSalesBidIsBuyFalse(memberDTO.getMno());
+        model.addAttribute("falseSalesBid", falseSalesBid); // 판매입찰 내역 진행중 갯수
+
+        int trueSalesBid = memberService.countSalesBidIsBuyTrue(memberDTO.getMno());
+        model.addAttribute("trueSalesBid", trueSalesBid); // 판매입찰 내역 종료 갯수
+
+        Page<MyProductDTO> salesList = memberService.allSales_lt6(mySearchDTO, pageable, memberDTO.getMno());
+        model.addAttribute("salesList", salesList);
+
+        int pageNum = salesList.hasNext() ? pageable.getPageNumber() : 1; // 목록이 1페이지뿐이면 페이지번호를 1로 재설정
+
+        model.addAttribute("searchToDate", mySearchDTO.getSearchToDate());
+        model.addAttribute("searchFromDate", mySearchDTO.getSearchFromDate());
+        model.addAttribute("type", mySearchDTO.getType());
+        model.addAttribute("page", pageNum);
+    }
 }

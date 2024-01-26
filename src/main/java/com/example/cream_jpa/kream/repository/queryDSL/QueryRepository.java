@@ -30,4 +30,5 @@ public interface QueryRepository{
     List<MyProductDTO> salesListTop3(Long mno); // 특정회원 판매입찰목록 3개
 
     Page<MyProductDTO> allPurchaseList_lt6(MySearchDTO mySearchDTO, Pageable pageable, Long mno); // 특정회원의 구매내역목록전체(6개월미만)
+    Page<MyProductDTO> allSalesList_lt6(MySearchDTO mySearchDTO, Pageable pageable, Long mno); // 특정회원의 판매내역목록전체(6개월미만)
 }

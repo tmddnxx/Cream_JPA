@@ -295,5 +295,63 @@ public class QueryRepositoryImpl extends QuerydslRepositorySupport implements Qu
         return new PageImpl<>(productDTOList, pageable, total);
     }
 
+    @Override
+    public Page<MyProductDTO> allSalesList_lt6(MySearchDTO mySearchDTO, Pageable pageable, Long mno) {
+        QProduct qProduct = QProduct.product;
+        QSales_bid qSales_bid = QSales_bid.sales_bid;
+
+        BooleanBuilder builder = new BooleanBuilder();
+        if (mySearchDTO.getType().equals("ing")){
+            builder.and(qSales_bid.isBuy.eq(false));
+        }else if (mySearchDTO.getType().equals("finished")){
+            builder.and(qSales_bid.isBuy.eq(true));
+        }
+
+        Predicate predicate = qSales_bid.mno.eq(mno)
+                .and(qSales_bid.bidDate.between(
+                        mySearchDTO.getSearchToDate().atStartOfDay(),
+                        mySearchDTO.getSearchFromDate().atStartOfDay())
+                ).and(builder);
+
+
+
+        List<Tuple> purchaseList =
+                jpaQueryFactory.select(qProduct.pno, qProduct.productName, qProduct.productImg, qSales_bid.bidDate)
+                        .from(qProduct)
+                        .join(qProduct.sales_bids, qSales_bid)
+                        .where(predicate)
+                        .orderBy(qSales_bid.bidDate.desc())
+                        .offset(pageable.getOffset())
+                        .limit(pageable.getPageSize())
+                        .fetch();
+
+        List<MyProductDTO> productDTOList = purchaseList.stream().map(tuple -> {
+
+            MyProductDTO productDTO = new MyProductDTO();
+            productDTO.setPno(tuple.get(qProduct.pno));
+            productDTO.setProductName(tuple.get(qProduct.productName));
+            productDTO.setMno(mno);
+
+            String[] imgArrays = tuple.get(qProduct.productImg).split(", ");
+            List<String> productImgs = Arrays.asList(imgArrays);
+            productDTO.setProductImg(productImgs);
+
+            LocalDate bidDate = tuple.get(qSales_bid.bidDate).toLocalDate();
+            productDTO.setBidDate(bidDate);
+
+            return productDTO;
+        }).collect(Collectors.toList());
+
+        Long total =
+                jpaQueryFactory.select(qProduct.count())
+                        .from(qProduct)
+                        .join(qProduct.sales_bids, qSales_bid)
+                        .where(predicate)
+                        .fetchOne();
+
+
+        return new PageImpl<>(productDTOList, pageable, total);
+    }
+
 
 }
