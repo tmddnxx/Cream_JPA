@@ -43,16 +43,25 @@ public class MemberServiceImpl implements MemberService{
     }
 
     @Override
-    public Optional<Member> getMemberByMemberId(String memberId) { // ID로 회원찾기
+    public MemberDTO getMemberByMemberId(String memberId) { // ID로 회원찾기
+        Optional<Member> member = memberRepository.findByMemberId(memberId);
 
-        return memberRepository.findByMemberId(memberId);
+        return member.map(Member::toDTO).orElse(null);
+    }
+
+    @Override
+    public MemberDTO findMemberByEmail(String email) { // 이메일로 회원찾기
+        Optional<Member> member = memberRepository.findByEmail(email);
+
+        return member.map(Member::toDTO).orElse(null);
     }
 
     @Override
     public MemberDTO findByMno(Long mno) { // mno로 회원찾기
 
         Optional<Member> member = memberRepository.findById(mno);
-        MemberDTO memberDTO = member.get().toDTO();
+        MemberDTO memberDTO;
+        memberDTO = member.map(Member::toDTO).orElse(null);
 
         return memberDTO;
     }

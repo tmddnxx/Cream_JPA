@@ -35,28 +35,14 @@ public class MyPageController {
         memberDTO = memberService.findByMno(memberDTO.getMno());
         model.addAttribute("memberDTO", memberDTO); // 로그인 유저 회원정보
 
-        // 구매내역
-        int allPurchaseBid = memberService.countAllPurchaseBidByMno(memberDTO.getMno());
-        model.addAttribute("allPurchaseBid", allPurchaseBid); // 구매내역 전체갯수
-
-        int falsePurchaseBid = memberService.countPurchaseBidIsBuyFalse(memberDTO.getMno());
-        model.addAttribute("falsePurchaseBid", falsePurchaseBid); // 구매내역 진행중갯수
-
-        int truePurchaseBid = memberService.countPurchaseBidIsBuyTrue(memberDTO.getMno());
-        model.addAttribute("truePurchaseBid", truePurchaseBid); // 구매내역 종료갯수
+        // 구매내역 갯수
+        countPurchaseBid(model, memberDTO);
 
         List<MyProductDTO> purchaseList = memberService.purchaseTop3List(memberDTO.getMno());
         model.addAttribute("purchaseList", purchaseList); // 구매내역 3개리스트
 
-        // 판매내역
-        int allSalesBid = memberService.countAllSalesBidByMno(memberDTO.getMno());
-        model.addAttribute("allSalesBid", allSalesBid); // 판매입찰 내역 전체갯수
-
-        int falseSalesBid = memberService.countSalesBidIsBuyFalse(memberDTO.getMno());
-        model.addAttribute("falseSalesBid", falseSalesBid); // 판매입찰 내역 진행중 갯수
-
-        int trueSalesBid = memberService.countSalesBidIsBuyTrue(memberDTO.getMno());
-        model.addAttribute("trueSalesBid", trueSalesBid); // 판매입찰 내역 종료 갯수
+        // 판매내역 갯수
+        countSalesBid(model, memberDTO);
 
         List<MyProductDTO> salesList = memberService.salesTop3List(memberDTO.getMno());
         model.addAttribute("salesList", salesList); // 판매입찰 내역 3개 리스트
@@ -67,14 +53,7 @@ public class MyPageController {
     @GetMapping("/buying")
     public void buying(Model model, @AuthenticationPrincipal MemberDTO memberDTO, MySearchDTO mySearchDTO, Pageable pageable){
         // 구매내역
-        int allPurchaseBid = memberService.countAllPurchaseBidByMno(memberDTO.getMno());
-        model.addAttribute("allPurchaseBid", allPurchaseBid); // 구매내역 전체갯수
-
-        int falsePurchaseBid = memberService.countPurchaseBidIsBuyFalse(memberDTO.getMno());
-        model.addAttribute("falsePurchaseBid", falsePurchaseBid); // 구매내역 진행중갯수
-
-        int truePurchaseBid = memberService.countPurchaseBidIsBuyTrue(memberDTO.getMno());
-        model.addAttribute("truePurchaseBid", truePurchaseBid); // 구매내역 종료갯수
+        countPurchaseBid(model, memberDTO);
 
         Page<MyProductDTO> purchaseList = memberService.allPurchase_lt6(mySearchDTO, pageable, memberDTO.getMno());
         model.addAttribute("purchaseList", purchaseList); // 6개월 이내 목록
@@ -87,17 +66,11 @@ public class MyPageController {
         model.addAttribute("page", pageNum);
     }
 
+
     @GetMapping("/selling")
     public void selling(Model model, @AuthenticationPrincipal MemberDTO memberDTO, MySearchDTO mySearchDTO, Pageable pageable){
         // 판매내역
-        int allSalesBid = memberService.countAllSalesBidByMno(memberDTO.getMno());
-        model.addAttribute("allSalesBid", allSalesBid); // 판매입찰 내역 전체갯수
-
-        int falseSalesBid = memberService.countSalesBidIsBuyFalse(memberDTO.getMno());
-        model.addAttribute("falseSalesBid", falseSalesBid); // 판매입찰 내역 진행중 갯수
-
-        int trueSalesBid = memberService.countSalesBidIsBuyTrue(memberDTO.getMno());
-        model.addAttribute("trueSalesBid", trueSalesBid); // 판매입찰 내역 종료 갯수
+        countSalesBid(model, memberDTO);
 
         Page<MyProductDTO> salesList = memberService.allSales_lt6(mySearchDTO, pageable, memberDTO.getMno());
         model.addAttribute("salesList", salesList);
@@ -108,5 +81,27 @@ public class MyPageController {
         model.addAttribute("searchFromDate", mySearchDTO.getSearchFromDate());
         model.addAttribute("type", mySearchDTO.getType());
         model.addAttribute("page", pageNum);
+    }
+
+    private void countSalesBid(Model model, @AuthenticationPrincipal MemberDTO memberDTO) {
+        int allSalesBid = memberService.countAllSalesBidByMno(memberDTO.getMno());
+        model.addAttribute("allSalesBid", allSalesBid); // 판매입찰 내역 전체갯수
+
+        int falseSalesBid = memberService.countSalesBidIsBuyFalse(memberDTO.getMno());
+        model.addAttribute("falseSalesBid", falseSalesBid); // 판매입찰 내역 진행중 갯수
+
+        int trueSalesBid = memberService.countSalesBidIsBuyTrue(memberDTO.getMno());
+        model.addAttribute("trueSalesBid", trueSalesBid); // 판매입찰 내역 종료 갯수
+    }
+
+    private void countPurchaseBid(Model model, @AuthenticationPrincipal MemberDTO memberDTO) {
+        int allPurchaseBid = memberService.countAllPurchaseBidByMno(memberDTO.getMno());
+        model.addAttribute("allPurchaseBid", allPurchaseBid); // 구매내역 전체갯수
+
+        int falsePurchaseBid = memberService.countPurchaseBidIsBuyFalse(memberDTO.getMno());
+        model.addAttribute("falsePurchaseBid", falsePurchaseBid); // 구매내역 진행중갯수
+
+        int truePurchaseBid = memberService.countPurchaseBidIsBuyTrue(memberDTO.getMno());
+        model.addAttribute("truePurchaseBid", truePurchaseBid); // 구매내역 종료갯수
     }
 }
