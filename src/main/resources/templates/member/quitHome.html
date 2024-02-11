@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{inc/layout.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>회원탈퇴</title>
+</head>
+<style layout:fragment="style">
+    *{
+        color: black;
+    }
+    .wrap{
+        width: 80%;
+        margin: 0 auto;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        display: flex;
+        min-height: 200px;
+    }
+    .wrap a{
+        border-bottom: 1px solid black;
+    }
+</style>
+<body>
+<div layout:fragment="content">
+    <div class="wrap">
+        <h1>Cream</h1>
+        <h3>회원탈퇴 처리가 완료되었습니다.</h3>
+        <a href="/">홈페이지 바로가기</a>
+    </div>
+</div>
+</body>
+</html>

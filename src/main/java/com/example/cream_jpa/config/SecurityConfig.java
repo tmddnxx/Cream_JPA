@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
@@ -17,11 +18,7 @@ import java.nio.charset.StandardCharsets;
 
 @Configuration
 @EnableWebSecurity
-@RequiredArgsConstructor
 public class SecurityConfig {
-
-    private final CustomUserDetailService customUserDetailService;
-    private final OAuth2UserService oAuth2UserService;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -39,6 +36,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/myPage").authenticated()
                         .requestMatchers(HttpMethod.GET, "/myPage/buying").authenticated()
                         .requestMatchers(HttpMethod.GET, "/myPage/selling").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/myPage/profile").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/myPage/withdrawal").authenticated()
                         .anyRequest()
                         .permitAll()
                 )

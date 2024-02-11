@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{inc/layout.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>로그인 정보</title>
+</head>
+<style layout:fragment="style">
+    .container{
+        width: 80%;
+        padding: 0;
+    }
+    p{
+        margin: 0;
+    }
+    .wrap{
+        min-height: 500px;
+    }
+    .sideNav{
+        width: 20%;
+    }
+    .myPageTitle{
+        font-size: 24px;
+        font-weight: 700;
+        letter-spacing: -.15px;
+        line-height: 29px;
+        padding-bottom: 30px;
+    }
+    .main{
+        width: 80%;
+    }
+    .my_profile{
+        margin-bottom: 160px;
+    }
+    .profile_title{
+        font-size: 24px;
+        font-weight: 700;
+        letter-spacing: -.15px;
+        padding-bottom: 16px;
+    }
+    .withdrawal_terms{
+        border: 1px solid #d3d3d3;
+        margin-top: 20px;
+        padding: 24px;
+    }
+    .term_title{
+        font-size: 16px;
+        letter-spacing: -.16px;
+    }
+    .checkbox_item{
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .checkbox{
+        width: 24px;
+        height: 24px;
+        cursor: pointer;
+    }
+    .check_label{
+        margin: 0;
+        font-size: 17px;
+        font-weight: 700;
+        letter-spacing: -.16px;
+        cursor: pointer;
+    }
+    .term_details{
+        padding-top: 5px
+    }
+    .term_item{
+        margin-top: 5px;
+        color: #333;
+        padding-left: 12px;
+        position: relative;
+        word-break: keep-all;
+        font-size: 15px;
+        letter-spacing: -.15px;
+    }
+    .term_item::before{
+        background-color: #222;
+        border-radius: 100%;
+        content: "";
+        height: 4px;
+        left: 0;
+        position: absolute;
+        top: 8px;
+        width: 4px;
+    }
+    .term_subTitle{
+        font-size: 15px;
+        letter-spacing: -.15px;
+        font-weight: 600;
+        padding-bottom: 8px;
+    }
+    .allAgree{
+        font-size: 16px;
+        letter-spacing: -.16px;
+        margin: 0;
+        cursor: pointer;
+    }
+    .withdrawal_btn_box{
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+    }
+    .button{
+        align-items: center;
+        background-color: #fff;
+        color: rgba(34,34,34,.8);
+        display: inline-flex;
+        justify-content: center;
+        text-align: center;
+        vertical-align: middle;
+        width: 120px;
+        border-radius: 12px;
+        font-size: 14px;
+        height: 42px;
+        letter-spacing: -.14px;
+        padding: 0 18px;
+    }
+    .quitBtn{
+        border: 1px solid #d3d3d3;
+        color: rgba(34,34,34,.8);
+    }
+    .cancelBtn{
+        background-color: #222;
+        color: #fff;
+        font-weight: 700;
+    }
+    .cancelBtn:hover{
+        color: #fff;
+    }
+    .modalCancel{
+        width: 120px;
+        background-color: #222;
+        color: #fff;
+        font-weight: 700;
+        border-radius: 12px;
+        font-size: 14px;
+        height: 42px;
+        letter-spacing: -.14px;
+    }
+    .modalQuit{
+        cursor: pointer;
+        color: rgba(34,34,34,.5) !important;
+        display: block;
+        font-size: 13px;
+        letter-spacing: -.07px;
+        margin-top: 8px;
+        text-decoration: underline !important;
+    }
+</style>
+<body>
+<div layout:fragment="content">
+    <div class="wrap mt-5 d-flex">
+        <div class="sideNav d-flex flex-column gap-4">
+            <a href="/myPage" class="myPageTitle">마이 페이지</a>
+            <div class="sub-menu">
+                <h5>쇼핑 정보</h5>
+                <ul>
+                    <li><a href="/myPage/buying" class="menu-item">구매 내역</a></li>
+                    <li><a href="/myPage/selling" class="menu-item">판매 내역</a></li>
+                </ul>
+            </div>
+            <div class="sub-menu">
+                <h5>내 정보</h5>
+                <ul>
+                    <li><a href="/myPage/profile" class="menu-item">로그인 정보</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="main">
+            <div class="my_profile">
+                <div class="profile_title">
+                    <h3>회원탈퇴</h3>
+                </div>
+                <div>
+                    <h5>회원탈퇴에 앞서 아래 내용을 반드시 확인해 주세요.</h5>
+                    <div class="withdrawal_terms">
+                        <div class="term_box">
+                            <h6 class="term_title">
+                                <div class="checkbox_item">
+                                    <input id="title0" type="checkbox" class="checkbox">
+                                    <label for="title0" class="check_label">CREAM을 탈퇴하면 회원 정보 및 서비스 이용 기록이 삭제됩니다.</label>
+                                </div>
+                            </h6>
+                            <div class="term_details">
+                                <ul class="term_list">
+                                    <li class="term_item"> 내 프로필, 거래내역(구매/판매), 관심상품, 보유상품, STYLE 게시물(게시물/댓글), 미사용 보유 포인트 등 사용자의 모든 정보가 사라지며 재가입 하더라도 복구가 불가능합니다. </li>
+                                    <li class="term_item"> 탈퇴 14일 이내 재가입할 수 없으며, 탈퇴 후 동일 이메일로 재가입할 수 없습니다 </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="term_box mt-5">
+                            <h6 class="term_title">
+                                <div class="checkbox_item">
+                                    <input id="title1" type="checkbox" class="checkbox">
+                                    <label for="title1" class="check_label">관련 법령 및 내부 기준에 따라 별도 보관하는 경우에는 일부 정보가 보관될 수 있습니다.</label>
+                                </div>
+                            </h6>
+                            <div class="term_details">
+                                <h6 class="term_subTitle"> 1. 전자상거래 등 소비자 보호에 관한 법률 </h6>
+                                <ul class="term_list">
+                                    <li class="term_item">계약 또는 청약철회 등에 관한 기록: 5년 보관  </li>
+                                    <li class="term_item"> 대금결제 및 재화 등의 공급에 관한 기록: 5년 보관 </li>
+                                    <li class="term_item"> 소비자의 불만 또는 분쟁처리에 관한 기록: 3년 보관  </li>
+                                </ul>
+                            </div>
+                            <div class="term_details">
+                                <h6 class="term_subTitle">  2. 통신비밀보호법  </h6>
+                                <ul class="term_list">
+                                    <li class="term_item"> 접속 로그 기록: 3개월 보관   </li>
+                                </ul>
+                            </div>
+                            <div class="term_details">
+                                <h6 class="term_subTitle">  3. 내부 기준에 따라 별도 보관  </h6>
+                                <ul class="term_list">
+                                    <li class="term_item"> 부정이용 방지를 위해 이름, 이메일(로그인ID), 휴대전화번호, CI/DI: 3년 보관  </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="term_box mt-5">
+                            <h6 class="term_title">
+                                <div class="checkbox_item">
+                                    <input id="title3" type="checkbox" class="checkbox">
+                                    <label for="title3" class="check_label">CREAM 탈퇴가 제한된 경우에는 아래 내용을 참고하시기 바랍니다.</label>
+                                </div>
+                            </h6>
+                            <div class="term_details">
+                                <ul class="term_list">
+                                    <li class="term_item">  진행 중인 거래(판매/구매)가 있을 경우: 해당 거래 종료 후 탈퇴 가능  </li>
+                                    <li class="term_item">  진행 중인 입찰(판매/구매)가 있을 경우: 해당 입찰 삭제 후 탈퇴 가능  </li>
+                                    <li class="term_item">  미납 수수료(착불 발송비/페널티)가 있을 경우: 해당 결제 완료 후 탈퇴 가능  </li>
+                                    <li class="term_item">  이용 정지 상태인 경우: 이용 정지 해제 후 탈퇴 가능 </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="withdrawal_check mt-3">
+                        <div class="checkbox_item">
+                            <input id="check1" type="checkbox" class="checkbox">
+                            <label for="check1" class="allAgree">회원탈퇴 안내를 모두 확인하였으며 탈퇴에 동의합니다.</label>
+                        </div>
+                    </div>
+                    <div class="withdrawal_btn_box mt-5">
+                        <button type="button" class="button quitBtn" disabled> 탈퇴하기 </button>
+                        <button type="button" class="button cancelBtn"> 취소하기 </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--    탈퇴모달-->
+    <div class="modal quitModal" tabindex="-1">
+        <div class="modal-dialog modal-sm modal-dialog-centered" style="min-width: 360px; max-width: 400px">
+            <div class="modal-content p-4">
+                <div class="modal-header" style="border: 0; position: relative; justify-content: center">
+                    <h5 class="font-weight-bold" style="position: absolute; top: 30px">정말 탈퇴하시겠습니까?</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="position: absolute; top: 0; right: 0;"></button>
+                </div>
+                <div class="modal-body mt-5">
+                    <div class="text-center" style="font-size: 14px">
+                        <p>탈퇴하기 클릭 시 바로 탈퇴 처리됩니다.
+                            <br>
+                            탈퇴 후 14일 이내 재가입할 수 없으며,
+                            <br>
+                            재가입 시 동일 이메일을 사용할 수 없습니다.
+                        </p>
+                    </div>
+                </div>
+                <div class="modal-footer" style="border: 0; flex-direction: column">
+                    <button type="button" class="modalCancel" data-bs-dismiss="modal">탈퇴 안 할래요</button>
+                    <a th:href="|@{/myPage/withdrawal/quit(mno=${memberDTO.mno})}|" class="modalQuit">탈퇴하기</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</div>
+</body>
+<script layout:fragment="script" th:inline="javascript">
+    const checkboxes = document.querySelectorAll('.checkbox');
+    const quitBtn = document.querySelector('.quitBtn');
+    const cancelBtn = document.querySelector('.cancelBtn');
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function (){
+            const allChecked = Array.from(checkboxes).every(checkbox => checkbox.checked);
+
+            if (allChecked){
+                quitBtn.disabled = false;
+                quitBtn.style.backgroundColor = '#ebebeb';
+            }else {
+                quitBtn.disabled = true;
+                quitBtn.style.backgroundColor = '#fff';
+            }
+        })
+    })
+
+    const quitModal = new bootstrap.Modal(document.querySelector('.quitModal'))
+    quitBtn.addEventListener('click', function (){
+        quitModal.show()
+    })
+
+    cancelBtn.addEventListener('click', function (){
+        window.location.href = `/myPage/profile`;
+    })
+</script>
+</html>

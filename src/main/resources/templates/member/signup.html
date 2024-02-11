@@ -626,8 +626,10 @@
             return response.data;
         }
     }
+
     // 비밀번호 유효성검사
     pwInput.addEventListener('blur', validatePasswd);
+    pwInput.addEventListener('keyup', validatePasswd);
     function validatePasswd(){
         const passwd = pwInput.value;
         const errorMsg = document.querySelector('.pwErrorMsg');
@@ -700,6 +702,7 @@
     }
     // 닉네임 유효성검사
     nickInput.addEventListener('blur', validateNick);
+    nickInput.addEventListener('keyup', validateNick);
     function validateNick(){
         const nickName = nickInput.value;
         const errorMsg = document.querySelector('.nickErrorMsg');
@@ -811,7 +814,6 @@
         })
         async function checkEmail(email){
             const response = await axios.post(`/validation/email/${email}`);
-            console.log(response.data);
             return response.data;
         }
 

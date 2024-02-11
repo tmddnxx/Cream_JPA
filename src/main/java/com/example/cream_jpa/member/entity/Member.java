@@ -3,17 +3,13 @@ package com.example.cream_jpa.member.entity;
 import com.example.cream_jpa.member.dto.MemberDTO;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
-import java.util.ArrayList;
-import java.util.Collection;
 
 @Entity
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class Member {
 
     @Id
@@ -45,5 +41,16 @@ public class Member {
         memberDTO.setRole(this.role);
 
         return memberDTO;
+    }
+
+    public void changePw(String passwd) {
+        this.passwd = passwd;
+    }
+    public void changeNickName(String nickname){
+        this.nickname = nickname;
+    }
+
+    public void changeEmail(String email){
+        this.email = email;
     }
 }

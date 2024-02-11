@@ -26,7 +26,7 @@ import java.util.Optional;
 public class OAuth2UserService extends DefaultOAuth2UserService {
 
     private final MemberRepository memberRepository;
-    private final PasswordEncoder passwordEncoder;
+    private final CustomUserDetailService customUserDetailService;
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
@@ -68,7 +68,7 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
         if (member.isEmpty()){
             Member newMember = Member.builder()
                     .memberId(email)
-                    .passwd(passwordEncoder.encode("1111"))
+                    .passwd(customUserDetailService.passwordEncoder().encode("1111"))
                     .email(email)
                     .role("user")
                     .build();

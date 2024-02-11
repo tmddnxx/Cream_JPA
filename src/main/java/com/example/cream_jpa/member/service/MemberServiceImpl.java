@@ -10,13 +10,16 @@ import com.example.cream_jpa.member.dto.MemberDTO;
 import com.example.cream_jpa.member.entity.Member;
 import com.example.cream_jpa.member.repository.MemberRepository;
 import com.example.cream_jpa.myPage.dto.MySearchDTO;
+import com.example.cream_jpa.security.CustomUserDetailService;
 import com.querydsl.core.Tuple;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.cglib.core.Local;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -28,6 +31,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Log4j2
 public class MemberServiceImpl implements MemberService{
 
     private final MemberRepository memberRepository;
@@ -35,6 +39,7 @@ public class MemberServiceImpl implements MemberService{
     private final PurchaseBidRepository purchaseBidRepository;
     private final SalesBidRepository salesBidRepository;
 
+    private final CustomUserDetailService customUserDetailService;
     @Override
     public void signUp(MemberDTO memberDTO) { // 회원가입
         Member member = memberDTO.toEntity();
@@ -64,6 +69,38 @@ public class MemberServiceImpl implements MemberService{
         memberDTO = member.map(Member::toDTO).orElse(null);
 
         return memberDTO;
+    }
+
+    @Override // 비밀번호 변경
+    public void changePw(Long mno, String passwd) {
+        Optional<Member> member = memberRepository.findById(mno);
+        Member actualMember = member.get();
+
+        actualMember.changePw(customUserDetailService.passwordEncoder().encode(passwd));
+        memberRepository.save(actualMember);
+    }
+
+    @Override
+    public void changeNick(Long mno, String nickName) {
+        Optional<Member> member = memberRepository.findById(mno);
+        Member actualMember = member.get();
+
+        actualMember.changeNickName(nickName);
+        memberRepository.save(actualMember);
+    }
+
+    @Override
+    public void changeEmail(Long mno, String email) {
+        Optional<Member> member = memberRepository.findById(mno);
+        Member actualMember = member.get();
+
+        actualMember.changeEmail(email);
+        memberRepository.save(actualMember);
+    }
+
+    @Override
+    public void withdrawal(Long mno) {
+        memberRepository.deleteById(mno);
     }
 
     @Override

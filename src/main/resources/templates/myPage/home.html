@@ -164,7 +164,7 @@
                 <div class="sub-menu">
                     <h5>내 정보</h5>
                     <ul>
-                        <li><a href="#" class="menu-item">로그인 정보</a></li>
+                        <li><a href="/myPage/profile" class="menu-item">로그인 정보</a></li>
                     </ul>
                 </div>
             </div>
@@ -262,15 +262,29 @@
         // 아이디 별표처리
         const originalUsername = [[${memberDTO.memberId}]];
 
-        // 몇 글자를 가릴지 정하기 (예시로 처음 두 글자와 마지막 글자는 그대로 두고 나머지는 가림)
-        const visibleCharacters = 1;
-        const hiddenCharacters = originalUsername.length - 1;
+        const maskedUsername = maskUsername(originalUsername);
+        document.querySelector('.memberId').innerHTML = maskedUsername;
 
-        // 사용자 아이디 일부 가리기
-        const maskedUsername = originalUsername.substring(0, visibleCharacters) + "*".repeat(hiddenCharacters) + originalUsername.slice(-1);
+        function maskUsername(username) {
+            if (username.includes('@')) {  // 이메일 형식인 경우
+                const [prefix, domain] = username.split('@');
+                if (prefix.length >= 3) {
+                    const maskedPrefix = prefix[0] + '*'.repeat(prefix.length - 2) + prefix.slice(-1);
+                    const maskedEmail = maskedPrefix + '@' + domain;
+                    return maskedEmail;
+                } else {
+                    return username;  // 잘못된 형식의 이메일은 그대로 반환
+                }
+            } else {  // 일반 아이디인 경우
+                if (username.length >= 3) {
+                    const maskedUsername = username[0] + '*'.repeat(username.length - 2) + username.slice(-1);
+                    return maskedUsername;
+                } else {
+                    return username;  // 너무 짧은 아이디는 그대로 반환
+                }
+            }
+        }
 
-        // 결과를 HTML에 추가
-        document.querySelector(".memberId").innerHTML = maskedUsername;
 
 
 </script>

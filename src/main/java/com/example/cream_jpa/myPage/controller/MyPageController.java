@@ -6,12 +6,14 @@ import com.example.cream_jpa.member.dto.MemberDTO;
 import com.example.cream_jpa.member.entity.Member;
 import com.example.cream_jpa.member.service.MemberService;
 import com.example.cream_jpa.myPage.dto.MySearchDTO;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -83,6 +85,27 @@ public class MyPageController {
         model.addAttribute("page", pageNum);
     }
 
+    @GetMapping("/profile")
+    public void profile(Model model, @AuthenticationPrincipal MemberDTO memberDTO){
+        memberDTO = memberService.findByMno(memberDTO.getMno());
+        model.addAttribute("memberDTO", memberDTO);
+    }
+
+    @GetMapping("/withdrawal")
+    public void withdrawal(Model model, @AuthenticationPrincipal MemberDTO memberDTO){
+        memberDTO = memberService.findByMno(memberDTO.getMno());
+        model.addAttribute("memberDTO", memberDTO);
+    }
+
+    @GetMapping("/withdrawal/quit")
+    public String quit(Long mno, HttpSession session){
+        memberService.withdrawal(mno);
+        session.invalidate();
+
+        return "redirect:/member/quitHome";
+    }
+
+
     private void countSalesBid(Model model, @AuthenticationPrincipal MemberDTO memberDTO) {
         int allSalesBid = memberService.countAllSalesBidByMno(memberDTO.getMno());
         model.addAttribute("allSalesBid", allSalesBid); // 판매입찰 내역 전체갯수
@@ -104,4 +127,6 @@ public class MyPageController {
         int truePurchaseBid = memberService.countPurchaseBidIsBuyTrue(memberDTO.getMno());
         model.addAttribute("truePurchaseBid", truePurchaseBid); // 구매내역 종료갯수
     }
+
+
 }

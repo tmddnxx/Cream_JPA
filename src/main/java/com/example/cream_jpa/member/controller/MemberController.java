@@ -2,6 +2,7 @@ package com.example.cream_jpa.member.controller;
 
 import com.example.cream_jpa.member.dto.MemberDTO;
 import com.example.cream_jpa.member.service.MemberService;
+import com.example.cream_jpa.security.CustomUserDetailService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -17,8 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequiredArgsConstructor
 public class MemberController {
     private  final MemberService memberService;
-    private final PasswordEncoder passwordEncoder;
-
+    private final CustomUserDetailService customUserDetailService;
     @GetMapping("/signup")
     public void signUp(){
 
@@ -27,7 +27,7 @@ public class MemberController {
     @PostMapping("/signup")
     public String signUpPost(MemberDTO memberDTO){
 
-        memberDTO.setPasswd(passwordEncoder.encode(memberDTO.getPasswd()));
+        memberDTO.setPasswd(customUserDetailService.passwordEncoder().encode(memberDTO.getPasswd()));
         memberDTO.setRole("user");
         memberService.signUp(memberDTO);
         log.info("memberDTO ? "+memberDTO);
@@ -39,5 +39,9 @@ public class MemberController {
     public void kakaoSignUp(MemberDTO memberDTO){
 
     }
-
+    
+    @GetMapping("quitHome")
+    public void quitHome(){
+        // 회원탈퇴 후 페이지
+    }
 }

@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{inc/layout.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>로그인 정보</title>
+</head>
+<style layout:fragment="style">
+    .container{
+        width: 80%;
+        padding: 0;
+    }
+    p{
+        margin: 0;
+    }
+    .wrap{
+        min-height: 500px;
+    }
+    .sideNav{
+        width: 20%;
+    }
+    .myPageTitle{
+        font-size: 24px;
+        font-weight: 700;
+        letter-spacing: -.15px;
+        line-height: 29px;
+        padding-bottom: 30px;
+    }
+    .main{
+        width: 80%;
+    }
+    .my_profile{
+        margin-bottom: 160px;
+    }
+    .profile_title{
+        font-size: 24px;
+        font-weight: 700;
+        letter-spacing: -.15px;
+        border-bottom: 3px solid #222;
+        padding-bottom: 16px;
+    }
+    .profile_info{
+        max-width: 500px;
+        padding-top: 38px;
+    }
+    .unit{
+        border-bottom: 1px solid #ebebeb;
+        display: flex;
+        flex-direction: column;
+        padding: 25px 0 12px;
+        position: relative;
+    }
+    .unit h6{
+        color: rgba(34,34,34,.5);
+        font-size: 13px;
+        font-weight: 400;
+        letter-spacing: -.07px;
+    }
+    .unit-content{
+        align-items: center;
+        display: flex;
+        justify-content: center;
+        width: 100%;
+    }
+    .desc{
+        flex: 1;
+        font-size: 16px;
+        letter-spacing: -.16px;
+        overflow: hidden;
+        padding-bottom: 8px;
+        padding-top: 8px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    .btn_modify{
+        position: absolute;
+        right: 0;
+        border: 1px solid #d3d3d3;
+        color: rgba(34,34,34,.8);
+        border-radius: 10px;
+        font-size: 12px;
+        height: 34px;
+        letter-spacing: -.06px;
+        padding: 0 14px;
+        align-items: center;
+        background-color: #fff;
+        cursor: pointer;
+        display: inline-flex;
+        justify-content: center;
+        text-align: center;
+        vertical-align: middle;
+    }
+    .withdrawal{
+        color: rgba(34,34,34,.5);
+        display: inline-block;
+        font-size: 13px;
+        letter-spacing: -.07px;
+        margin-top: 55px;
+        padding: 5px 0;
+    }
+    .unit-modify{
+        display: none;
+        padding: 25px 0 12px;
+    }
+    .input-box{
+        padding: 10px 0 14px;
+        position: relative;
+    }
+    .input-title{
+        font-size: 13px;
+        letter-spacing: -.07px;
+        line-height: 18px;
+    }
+    input{
+        border: none;
+        width: 100%;
+        outline: none;
+    }
+    .input-text{
+        font-size: 15px;
+        letter-spacing: -.15px;
+        padding: 7px 0;
+        border-bottom: 1px solid #ebebeb;
+    }
+    .input-text:focus{
+        border-bottom: 2px solid black;
+    }
+    .modify_btn_box{
+        font-size: 0;
+        padding-top: 28px;
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+    }
+    .input_modify_btn{
+        min-width: 100px;
+        align-items: center;
+        background-color: #fff;
+        display: inline-flex;
+        justify-content: center;
+        text-align: center;
+        vertical-align: middle;
+        border: 1px solid #d3d3d3;
+        color: rgba(34,34,34,.8);
+        border-radius: 12px;
+        font-size: 14px;
+        height: 42px;
+        letter-spacing: -.14px;
+    }
+    .disabled{
+        background-color: #ebebeb;
+        color: #fff;
+    }
+    .solid{
+        background-color: #222;
+        color: #fff;
+        font-weight: 700;
+    }
+    .input-error{
+        color: #f15746;
+    }
+    .confirmMail{
+        display: none;
+        margin: 0 auto;
+        width: 60%;
+    }
+    .confirmBtn{
+        width: 70px;
+        align-items: center;
+        background-color: #222;
+        display: inline-flex;
+        justify-content: center;
+        text-align: center;
+        vertical-align: middle;
+        color: #fff;
+        border-radius: 12px;
+        font-size: 14px;
+        height: 42px;
+        letter-spacing: -.14px;
+    }
+</style>
+<body>
+    <div layout:fragment="content">
+        <div class="wrap mt-5 d-flex">
+            <div class="sideNav d-flex flex-column gap-4">
+                <a href="/myPage" class="myPageTitle">마이 페이지</a>
+                <div class="sub-menu">
+                    <h5>쇼핑 정보</h5>
+                    <ul>
+                        <li><a href="/myPage/buying" class="menu-item">구매 내역</a></li>
+                        <li><a href="/myPage/selling" class="menu-item">판매 내역</a></li>
+                    </ul>
+                </div>
+                <div class="sub-menu">
+                    <h5>내 정보</h5>
+                    <ul>
+                        <li><a href="/myPage/profile" class="menu-item" style="font-weight: bold">로그인 정보</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="main">
+                <div class="my_profile">
+                    <div class="profile_title">
+                        <h3>로그인 정보</h3>
+                    </div>
+                    <div class="profile_info">
+                        <div class="profile_group">
+                            <h5>내 계정</h5>
+                            <div class="unit">
+                                <h6>아이디</h6>
+                                <div class="unit-content">
+                                    <p class="desc memberId"></p>
+                                </div>
+                            </div>
+
+                            <div class="unit passwdInfo">
+                                <h6>비밀번호</h6>
+                                <div class="unit-content">
+                                    <p class="desc passwd">●●●●●●●●●</p>
+                                    <button type="button" class="btn_modify" onclick="showEmailModify(this)"> 변경 </button>
+                                </div>
+                            </div>
+                            <div class="unit-modify passwdModi">
+                                <h6 class="font-weight-bold">비밀번호 변경</h6>
+                                <div class="input-box">
+                                    <h6 class="input-title">이전 비밀번호</h6>
+                                    <div class="input-item">
+                                        <input type="password" class="input-text prevPasswd" placeholder="영문, 숫자, 특수문자 조합 8-16자" autocomplete="off">
+                                        <p class="input-error"></p>
+                                    </div>
+                                </div>
+                                <div class="input-box">
+                                    <h6 class="input-title">새 비밀번호</h6>
+                                    <div class="input-item">
+                                        <input type="password" class="input-text newPasswd" placeholder="영문, 숫자, 특수문자 조합 8-16자" autocomplete="off">
+                                        <p class="input-error"></p>
+                                    </div>
+                                </div>
+                                <div class="modify_btn_box">
+                                    <button type="button" class="input_modify_btn" onclick="cancelEmailModify(this)"> 취소 </button>
+                                    <button type="button" class="input_modify_btn passBtn disabled" disabled> 저장 </button>
+                                </div>
+                            </div>
+
+                            <div class="unit nickInfo">
+                                <h6>닉네임</h6>
+                                <div class="unit-content">
+                                    <p class="desc nickName">[[${memberDTO.nickname}]]</p>
+                                    <button type="button" class="btn_modify" onclick="showEmailModify(this)"> 변경 </button>
+                                </div>
+                            </div>
+                            <div class="unit-modify nickModi">
+                                <h6 class="font-weight-bold">닉네임 변경</h6>
+                                <div class="input-box">
+                                    <h6 class="input-title">닉네임</h6>
+                                    <div class="input-item">
+                                        <input type="text" class="input-text nickNameInput" placeholder="특수문자를 제외하고 입력하세요" autocomplete="off">
+                                        <p class="input-error"></p>
+                                    </div>
+                                </div>
+                                <div class="modify_btn_box">
+                                    <button type="button" class="input_modify_btn" onclick="cancelEmailModify(this)"> 취소 </button>
+                                    <button type="button" class="input_modify_btn passBtn disabled" disabled> 저장 </button>
+                                </div>
+                            </div>
+
+                            <div class="unit emailInfo">
+                                <h6>이메일</h6>
+                                <div class="unit-content">
+                                    <p class="desc email">[[${memberDTO.email}]]</p>
+                                    <button type="button" class="btn_modify" onclick="showEmailModify(this)"> 변경 </button>
+                                </div>
+                            </div>
+                            <div class="unit-modify emailModi">
+                                <h6 class="font-weight-bold">이메일 변경</h6>
+                                <div class="input-box">
+                                    <h6 class="input-title">이메일</h6>
+                                    <div class="input-item">
+                                        <input type="text" class="input-text emailInput" placeholder="cream@cream.com" autocomplete="off">
+                                        <p class="input-error"></p>
+                                    </div>
+                                </div>
+                                <div class="modify_btn_box">
+                                    <button type="button" class="input_modify_btn" onclick="cancelEmailModify(this)"> 취소 </button>
+                                    <button type="button" class="input_modify_btn passBtn disabled" disabled> 인증메일 발송 </button>
+                                </div>
+                                <div class="confirmMail mt-3">
+                                    <div class="d-flex">
+                                        <input type="text" class="input-text confirmKey font-weight-bold" placeholder="인증번호를 입력해주세요.">
+                                        <button type="button" class="confirmBtn">인증</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <a href="/myPage/withdrawal" class="withdrawal">회원 탈퇴</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    </div>
+</body>
+<script layout:fragment="script" th:inline="javascript">
+
+    // auth
+    auth = [[${memberDTO}]];
+    // 아이디 별표처리
+    const originalUsername = [[${memberDTO.memberId}]];
+
+    const maskedUsername = maskUsername(originalUsername);
+    document.querySelector('.memberId').innerHTML = maskedUsername;
+
+    function maskUsername(username) {
+        if (username.includes('@')) {  // 이메일 형식인 경우
+            const [prefix, domain] = username.split('@');
+            if (prefix.length >= 3) {
+                const maskedPrefix = prefix[0] + '*'.repeat(prefix.length - 2) + prefix.slice(-1);
+                const maskedEmail = maskedPrefix + '@' + domain;
+                return maskedEmail;
+            } else {
+                return username;  // 잘못된 형식의 이메일은 그대로 반환
+            }
+        } else {  // 일반 아이디인 경우
+            if (username.length >= 3) {
+                const maskedUsername = username[0] + '*'.repeat(username.length - 2) + username.slice(-1);
+                return maskedUsername;
+            } else {
+                return username;  // 너무 짧은 아이디는 그대로 반환
+            }
+        }
+    }
+
+    // 변경버튼
+    function showEmailModify(button) {
+        // 해당 버튼의 부모 노드에서 unit을 찾아서 숨기고, 다음 형제 노드에서 unit-modify를 보이게 함
+        button.closest('.unit').style.display = 'none';
+        button.closest('.unit').nextElementSibling.style.display = 'block';
+    }
+    // 취소버튼
+    function cancelEmailModify(button) {
+        // 해당 버튼의 부모 노드에서 unit-modify를 찾아서 숨기고, 이전 형제 노드에서 unit을 보이게 함
+        button.closest('.unit-modify').style.display = 'none';
+        button.closest('.unit-modify').previousElementSibling.style.display = 'block';
+    }
+
+    const prevPwInput = document.querySelector('.prevPasswd');
+    const newPwInput = document.querySelector('.newPasswd');
+    const nickInput = document.querySelector('.nickNameInput');
+    const emailInput = document.querySelector('.emailInput');
+
+    // 이전비밀번호 유효성검사
+    prevPwInput.addEventListener('blur', validatePrevPasswd);
+    prevPwInput.addEventListener('keyup', validatePrevPasswd);
+    let prevPwCheck = false;
+    let newPwCheck = false;
+    function validatePrevPasswd(){
+        const passwd = prevPwInput.value;
+        const errorMsg = prevPwInput.parentNode.querySelector('.input-error');
+        const label = prevPwInput.parentNode.parentNode.querySelector('.input-title');
+
+        // 공백 검사
+        if (/\s/.test(passwd)) {
+            errorMsg.innerText = '공백을 포함할 수 없습니다.';
+            label.style.color = '#f15746';
+            prevPwInput.style.borderBottomColor = '#ef6253';
+            checkPass(prevPwInput, false);
+            prevPwCheck = false;
+            return;
+        }else{
+            errorMsg.innerText = '';
+            label.style.color = 'black';
+            prevPwInput.style.borderBottomColor = '';
+            if (newPwInput.value === ''){
+                checkPass(prevPwInput, false);
+                prevPwCheck = false;
+            }else{
+                checkPass(prevPwInput, true);
+                prevPwCheck = true;
+            }
+        }
+
+        // 길이 검사
+        if (passwd.length < 8 || passwd.length >16){
+            errorMsg.innerText = '비밀번호는 8자 이상 16자 이하이어야 합니다.';
+            label.style.color = '#f15746';
+            prevPwInput.style.borderBottomColor = '#ef6253';
+            checkPass(prevPwInput, false);
+            prevPwCheck = false;
+            return;
+        }else{
+            errorMsg.innerText = '';
+            label.style.color = 'black';
+            prevPwInput.style.borderBottomColor = '';
+            if (newPwInput.value === ''){
+                checkPass(prevPwInput, false);
+                prevPwCheck = false;
+            }else{
+                checkPass(prevPwInput, true);
+                prevPwCheck = true;
+            }
+        }
+
+        // 한글 x 검사
+        if (/[\uac00-\ud7a3]/.test(passwd)) {
+            errorMsg.innerText = "비밀번호에 한글을 사용할 수 없습니다.";
+            label.style.color = '#f15746';
+            prevPwInput.style.borderBottomColor = '#ef6253';
+            checkPass(prevPwInput, false);
+            prevPwCheck = false;
+            return;
+        }else {
+            errorMsg.innerText = '';
+            label.style.color = 'black';
+            prevPwInput.style.borderBottomColor = '';
+            if (newPwInput.value === ''){
+                checkPass(prevPwInput, false);
+                prevPwCheck = false;
+            }else{
+                checkPass(prevPwInput, true);
+                prevPwCheck = true;
+            }
+        }
+
+        // 문자열 검사
+        const regex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]+$/;
+        if (!regex.test(passwd)){
+            errorMsg.innerText = '비밀번호는 영문, 숫자, 특수문자를 모두 포함해야 합니다.';
+            label.style.color = '#f15746';
+            prevPwInput.style.borderBottomColor = '#ef6253';
+            checkPass(prevPwInput, false);
+            prevPwCheck = false;
+            return;
+        }else {
+            errorMsg.innerText = '';
+            label.style.color = 'black';
+            prevPwInput.style.borderBottomColor = '';
+            if (newPwInput.value === ''){
+                checkPass(prevPwInput, false);
+                prevPwCheck = false;
+            }else{
+                checkPass(prevPwInput, true);
+                prevPwCheck = true;
+            }
+        }
+        if (prevPwCheck && newPwCheck){
+            checkPass(prevPwInput, true);
+        }else{
+            checkPass(prevPwInput, false);
+        }
+    }
+    // 새 비밀번호 유효성검사
+    newPwInput.addEventListener('blur', validateNewPasswd);
+    newPwInput.addEventListener('keyup', validateNewPasswd);
+    function validateNewPasswd(){
+        const passwd = newPwInput.value;
+        const errorMsg = newPwInput.parentNode.querySelector('.input-error');
+        const label = newPwInput.parentNode.parentNode.querySelector('.input-title');
+
+        // 공백 검사
+        if (/\s/.test(passwd)) {
+            errorMsg.innerText = '공백을 포함할 수 없습니다.';
+            label.style.color = '#f15746';
+            newPwInput.style.borderBottomColor = '#ef6253';
+            checkPass(prevPwInput, false);
+            newPwCheck = false;
+            return;
+        }else{
+            errorMsg.innerText = '';
+            label.style.color = 'black';
+            newPwInput.style.borderBottomColor = '';
+            if (prevPwInput.value === ''){
+                checkPass(prevPwInput, false);
+                newPwCheck = false;
+            }else{
+                checkPass(prevPwInput, true);
+                newPwCheck = true;
+            }
+        }
+
+        // 길이 검사
+        if (passwd.length < 8 || passwd.length >16){
+            errorMsg.innerText = '비밀번호는 8자 이상 16자 이하이어야 합니다.';
+            label.style.color = '#f15746';
+            newPwInput.style.borderBottomColor = '#ef6253';
+            checkPass(newPwInput, false);
+            newPwCheck = false;
+            return;
+        }else{
+            errorMsg.innerText = '';
+            label.style.color = 'black';
+            newPwInput.style.borderBottomColor = '';
+            if (prevPwInput.value === ''){
+                checkPass(prevPwInput, false);
+                newPwCheck = false;
+            }else{
+                checkPass(prevPwInput, true);
+                newPwCheck = true;
+            }
+        }
+
+        // 한글 x 검사
+        if (/[\uac00-\ud7a3]/.test(passwd)) {
+            errorMsg.innerText = "비밀번호에 한글을 사용할 수 없습니다.";
+            label.style.color = '#f15746';
+            newPwInput.style.borderBottomColor = '#ef6253';
+            checkPass(prevPwInput, false);
+            newPwCheck = false;
+            return;
+        }else {
+            errorMsg.innerText = '';
+            label.style.color = 'black';
+            newPwInput.style.borderBottomColor = '';
+            if (prevPwInput.value === ''){
+                checkPass(prevPwInput, false);
+                newPwCheck = false;
+            }else{
+                checkPass(prevPwInput, true);
+                newPwCheck = true;
+            }
+        }
+
+        // 문자열 검사
+        const regex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]+$/;
+        if (!regex.test(passwd)){
+            errorMsg.innerText = '비밀번호는 영문, 숫자, 특수문자를 모두 포함해야 합니다.';
+            label.style.color = '#f15746';
+            newPwInput.style.borderBottomColor = '#ef6253';
+            checkPass(prevPwInput, false);
+            newPwCheck = false;
+            return;
+        }else {
+            errorMsg.innerText = '';
+            label.style.color = 'black';
+            newPwInput.style.borderBottomColor = '';
+            if (prevPwInput.value === ''){
+                checkPass(prevPwInput, false);
+                newPwCheck = false;
+            }else{
+                checkPass(prevPwInput, true);
+                newPwCheck = true;
+            }
+        }
+        if (prevPwCheck && newPwCheck){
+            checkPass(prevPwInput, true);
+        }else{
+            checkPass(prevPwInput, false);
+        }
+    }
+    // 기존 비밀번호 체크 및 비밀번호 변경
+    const pwBtn = document.querySelector('.passwdModi').querySelector('.passBtn');
+    pwBtn.addEventListener('click', function (){
+        async function checkPw(existingPw, mno, newPw){
+           const response = await axios.post(`/validation/passwd`, null, {
+                params: {
+                    existingPw:existingPw,
+                    mno:mno,
+                    newPw:newPw
+                }
+            });
+
+           return response.data;
+        }
+        checkPw(prevPwInput.value, auth.mno, newPwInput.value).then(result => {
+            if (result === true){
+                window.location.href = `/login`;
+            }else{
+                alert("기존 비밀번호가 일치하지 않습니다");
+            }
+        });
+    })
+
+    // 닉네임 유효성검사
+    nickInput.addEventListener('blur', validateNick);
+    nickInput.addEventListener('keyup', validateNick);
+    function validateNick(){
+        const nickName = nickInput.value;
+        const errorMsg = nickInput.parentNode.querySelector('.input-error');
+        const label = nickInput.parentNode.parentNode.querySelector('.input-title');
+
+        // 공백검사
+        if (/\s/.test(nickName)) {
+            errorMsg.innerText = '공백을 포함할 수 없습니다.';
+            label.style.color = '#f15746';
+            nickInput.style.borderBottomColor = '#ef6253';
+            checkPass(nickInput, false);
+            return;
+        }else{
+            errorMsg.innerText = '';
+            label.style.color = 'black';
+            nickInput.style.borderBottomColor = '';
+            checkPass(nickInput, true);
+        }
+
+        // 길이 검사
+        if (nickName.length < 2 || nickName.length > 12){
+            errorMsg.innerText = '닉네임은 2자이상 12자 이하이어야 합니다.';
+            label.style.color = '#f15746';
+            nickInput.style.borderBottomColor = '#ef6253';
+            checkPass(nickInput, false);
+            return;
+        }else {
+            errorMsg.innerText = '';
+            label.style.color = 'black';
+            nickInput.style.borderBottomColor = '';
+            checkPass(nickInput, true);
+        }
+
+        // 문자열 검사
+        const regex = /[!@#$%^&*]/;
+        if (regex.test(nickName)) {
+            errorMsg.innerText = '특수문자를 사용할 수 없습니다.';
+            label.style.color = '#f15746';
+            nickInput.style.borderBottomColor = '#ef6253';
+            checkPass(nickInput, false);
+            return;
+        }else{
+            errorMsg.innerText = '';
+            label.style.color = 'black';
+            nickInput.style.borderBottomColor = '';
+            checkPass(nickInput, true);
+        }
+    }
+    const nickBtn = document.querySelector('.nickModi').querySelector('.passBtn');
+    nickBtn.addEventListener('click', function (){
+        async function modifyNickName(nickName, mno){
+            const data = {
+                nickname: nickName,
+                mno: mno,
+            };
+            const response = await axios.post(`/validation/nickName`, data)
+            return response.data;
+        }
+        modifyNickName(nickInput.value, auth.mno).then(result =>{
+            document.querySelector('.nickModi').style.display = 'none';
+            document.querySelector('.nickInfo').style.display = 'block';
+            document.querySelector('.nickName').innerHTML = result;
+        })
+    })
+
+    // 이메일 유효성검사
+    emailInput.addEventListener('blur', validateEmail);
+    function validateEmail(){
+        const email = emailInput.value;
+        const errorMsg = emailInput.parentNode.querySelector('.input-error');
+        const label = emailInput.parentNode.parentNode.querySelector('.input-title');
+
+        // 공백검사
+        if (/\s/.test(email)) {
+            errorMsg.innerText = '공백을 포함할 수 없습니다.';
+            label.style.color = '#f15746';
+            emailInput.style.borderBottomColor = '#ef6253';
+            checkPass(emailInput, false);
+            return;
+        }else{
+            errorMsg.innerText = '';
+            label.style.color = 'black';
+            emailInput.style.borderBottomColor = '';
+            checkPass(emailInput, true);
+        }
+
+        // 이메일 형식 검사
+        const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+        if (!emailRegex.test(email)){
+            errorMsg.innerText = '올바른 이메일 형식이 아닙니다.';
+            label.style.color = '#f15746';
+            emailInput.style.borderBottomColor = '#ef6253';
+            checkPass(emailInput, false);
+            return;
+        }else{
+            errorMsg.innerText = '';
+            label.style.color = 'black';
+            emailInput.style.borderBottomColor = '';
+            checkPass(emailInput, true);
+        }
+
+        // 이메일 중복검사
+        checkEmail(email).then(result => {
+            if(result === ''){
+                label.style.color = 'black';
+                emailInput.style.borderBottomColor = '';
+                checkPass(emailInput, true);
+            }else{
+                errorMsg.innerText = result;
+                label.style.color = '#f15746';
+                emailInput.style.borderBottomColor = '#ef6253';
+                checkPass(emailInput, false);
+            }
+        })
+        async function checkEmail(email){
+            const response = await axios.post(`/validation/email/${email}`);
+            return response.data;
+        }
+    }
+    const mailBtn = document.querySelector('.emailModi').querySelector('.passBtn');
+    // 메일보내기
+    function mailBtnClickHandler() {
+        alert('인증메일전송까지 시간이 소요됩니다. 잠시만 기다려주세요...')
+        mailBtn.disabled = true;
+        mailBtn.style.backgroundColor = '#ebebeb';
+
+        // 인증 메일 보내기
+        async function sendConfirmMail(mailTo) {
+            console.log("mailTo: ", mailTo);
+            const request = await axios.get(`/mail/sendConfirmMail?mailTo=${mailTo}`);
+            return request.data;
+        }
+
+        sendConfirmMail(emailInput.value).then(result => {
+            if (result === true){
+                alert('인증메일이 전송되었습니다.');
+                document.querySelector('.confirmMail').style.display = 'block';
+            } else {
+                alert('인증메일 전송 실패');
+            }
+        });
+
+        // 메일보내기 핸들러 제거
+        mailBtn.removeEventListener('click', mailBtnClickHandler);
+
+        // 인증번호 확인하기
+        document.querySelector('.confirmBtn').addEventListener('click', function (){
+            const confirmKey = document.querySelector('.confirmKey');
+
+            async function matchConfirmKey(confirmKey) {
+                console.log(confirmKey);
+                const request = await axios.post('/mail/matchConfirmKey', null, {
+                    params: { reqConfirmKey: confirmKey },
+                    responseType: 'text'
+                });
+                return request.data;
+            }
+
+            matchConfirmKey(confirmKey.value).then(result => {
+                if (result){
+                    alert("인증이 완료되었습니다.");
+                    // 여기서 작업시작
+                    document.querySelector('.confirmMail').style.display = 'none';
+                    mailBtn.disabled = false;
+                    mailBtn.style.backgroundColor = '#222';
+                    mailBtn.innerHTML = '저장';
+
+                    // 이메일수정 저장
+                    mailBtn.addEventListener('click', function (){
+                        async function modifyEmail(email, mno){
+                            const data = {
+                                email:email,
+                                mno:mno
+                            }
+                            const response = await axios.post(`/validation/email`, data);
+                            return response.data;
+                        }
+                        modifyEmail(emailInput.value, auth.mno).then(result => {
+                            document.querySelector('.emailModi').style.display = 'none';
+                            document.querySelector('.emailInfo').style.display = 'block';
+                            document.querySelector('.email').innerHTML = result;
+                        })
+                    });
+                } else {
+                    alert("인증 실패");
+                }
+            });
+        });
+    }
+
+    // 초기 클릭 이벤트 핸들러 등록
+    mailBtn.addEventListener('click', mailBtnClickHandler);
+
+    // 저장버튼 활성화
+    function checkPass(target, pass){
+        const modifyBtn = target.closest('.unit-modify').querySelector('.passBtn');
+        if (pass === true){
+            modifyBtn.classList.add('solid');
+            modifyBtn.classList.remove('disabled');
+            modifyBtn.disabled = false;
+        }else{
+            modifyBtn.classList.add('disabled');
+            modifyBtn.classList.remove('solid');
+            modifyBtn.disabled = true;
+        }
+        if (target.value === ''){
+            modifyBtn.classList.add('disabled');
+            modifyBtn.classList.remove('solid');
+            modifyBtn.disabled = true;
+        }
+    }
+
+</script>
+</html>

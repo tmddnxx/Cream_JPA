@@ -18,9 +18,11 @@ public interface MemberService {
 
     MemberDTO getMemberByMemberId(String memberId); // 아이디로 회원찾기
     MemberDTO findMemberByEmail(String email); // 이메일로 회원찾기
-    
     MemberDTO findByMno(Long mno); // mno로 회원찾기
-
+    void changePw(Long mno, String passwd); // 비밀번호 변경
+    void changeNick(Long mno, String nickName); // 닉네임 변경
+    void changeEmail(Long mno, String email); // 이메일 변경
+    void withdrawal(Long mno); // 회원탈퇴
     int countAllPurchaseBidByMno(Long mno); // 특정 회원 구매입찰 전체 찾기
     int countPurchaseBidIsBuyFalse(Long mno); // 특정 회원 구매입찰 진행중 찾기
     int countPurchaseBidIsBuyTrue(Long mno); // 특정 회원 구매입찰 진행중 찾기
