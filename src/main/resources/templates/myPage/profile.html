@@ -629,7 +629,6 @@
         async function modifyNickName(nickName, mno){
             const data = {
                 memberId: auth.memberId,
-                passwd: auth.passwd,
                 nickname: nickName,
                 mno: mno,
             };
@@ -694,7 +693,7 @@
             }
         })
         async function checkEmail(email){
-            const response = await axios.put(`/validation/email/${email}`);
+            const response = await axios.post(`/validation/email/${email}`);
             return response.data;
         }
     }
@@ -750,10 +749,11 @@
                     mailBtn.addEventListener('click', function (){
                         async function modifyEmail(email, mno){
                             const data = {
+                                memberId:auth.memberId,
                                 email:email,
                                 mno:mno
                             }
-                            const response = await axios.post(`/validation/email`, data);
+                            const response = await axios.put(`/validation/email`, data);
                             return response.data;
                         }
                         modifyEmail(emailInput.value, auth.mno).then(result => {
