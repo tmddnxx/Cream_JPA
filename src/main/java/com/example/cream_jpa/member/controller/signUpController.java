@@ -6,6 +6,12 @@ import com.example.cream_jpa.security.CustomUserDetailService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.repository.query.Param;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @Log4j2
@@ -16,6 +22,7 @@ public class signUpController {
 
     private final MemberService memberService;
     private final CustomUserDetailService customUserDetailService;
+
 
     // 아이디 중복체크
     @PostMapping("/memberId/{memberId}")
@@ -49,7 +56,7 @@ public class signUpController {
     }
     
     // 기존 비밀번호 확인 및 변경
-    @PostMapping("/passwd")
+    @PutMapping("/passwd")
     public boolean checkPasswd(@RequestParam("existingPw") String existingPw, @RequestParam("mno") Long mno, @RequestParam("newPw") String newPw){
         MemberDTO memberDTO = memberService.findByMno(mno);
         String dbPasswd = memberDTO.getPasswd();
@@ -64,19 +71,30 @@ public class signUpController {
         }
     }
 
-    @PostMapping("/nickName") // 닉네임변경
+    @PutMapping("/nickName") // 닉네임변경
     public String modifyNickName(@RequestBody MemberDTO memberDTO){
         memberService.changeNick(memberDTO.getMno(), memberDTO.getNickname());
+        
+        sessionUpdate(memberDTO);
 
         return memberDTO.getNickname();
     }
 
-    @PostMapping("/email") // 이메일 변경
+    @PutMapping("/email") // 이메일 변경
     public String modifyEmail(@RequestBody MemberDTO memberDTO){
         memberService.changeEmail(memberDTO.getMno(), memberDTO.getEmail());
 
+        sessionUpdate(memberDTO);
+        
         return memberDTO.getEmail();
     }
 
-
+    private void sessionUpdate(MemberDTO memberDTO){ // 세션업데이트
+        // 변경된 회원정보
+        UserDetails userDetails = customUserDetailService.loadUserByUsername(memberDTO.getMemberId());
+        // 회원인증하기
+        Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+        // 세션 재설정
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+    }
 }

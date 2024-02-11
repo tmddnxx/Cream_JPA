@@ -306,6 +306,8 @@
 
     // auth
     auth = [[${memberDTO}]];
+    auth1 = [[${#authentication.principal}]];
+    console.log(auth1);
     // 아이디 별표처리
     const originalUsername = [[${memberDTO.memberId}]];
 
@@ -552,7 +554,7 @@
     const pwBtn = document.querySelector('.passwdModi').querySelector('.passBtn');
     pwBtn.addEventListener('click', function (){
         async function checkPw(existingPw, mno, newPw){
-           const response = await axios.post(`/validation/passwd`, null, {
+           const response = await axios.put(`/validation/passwd`, null, {
                 params: {
                     existingPw:existingPw,
                     mno:mno,
@@ -626,16 +628,19 @@
     nickBtn.addEventListener('click', function (){
         async function modifyNickName(nickName, mno){
             const data = {
+                memberId: auth.memberId,
+                passwd: auth.passwd,
                 nickname: nickName,
                 mno: mno,
             };
-            const response = await axios.post(`/validation/nickName`, data)
+            const response = await axios.put(`/validation/nickName`, data)
             return response.data;
         }
         modifyNickName(nickInput.value, auth.mno).then(result =>{
             document.querySelector('.nickModi').style.display = 'none';
             document.querySelector('.nickInfo').style.display = 'block';
             document.querySelector('.nickName').innerHTML = result;
+            console.log(auth1);
         })
     })
 
@@ -689,7 +694,7 @@
             }
         })
         async function checkEmail(email){
-            const response = await axios.post(`/validation/email/${email}`);
+            const response = await axios.put(`/validation/email/${email}`);
             return response.data;
         }
     }
