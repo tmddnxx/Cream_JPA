@@ -20,18 +20,20 @@ public class MemberDTO implements UserDetails, OAuth2User {
     private String passwd;
     private String nickname;
     private String email;
+    private String phone;
     private String role;
 
     private List<SimpleGrantedAuthority> authorities;
 
     Map<String, Object> oAuth2Attributes; // oAuth2User
 
-    public MemberDTO(Long mno, String memberId, String passwd, String nickname, String email, String role, List<SimpleGrantedAuthority> authorities) {
+    public MemberDTO(Long mno, String memberId, String passwd, String nickname, String email, String phone, String role, List<SimpleGrantedAuthority> authorities) {
         this.mno = mno;
         this.memberId = memberId;
         this.passwd = passwd;
         this.nickname = nickname;
         this.email = email;
+        this.phone = phone;
         this.role = role;
         this.authorities = authorities;
     }
@@ -45,6 +47,7 @@ public class MemberDTO implements UserDetails, OAuth2User {
                 .passwd(this.passwd)
                 .nickname(this.nickname)
                 .email(this.email)
+                .phone(this.phone)
                 .role(this.role)
                 .build();
 

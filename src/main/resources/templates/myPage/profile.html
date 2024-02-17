@@ -179,6 +179,11 @@
         height: 42px;
         letter-spacing: -.14px;
     }
+    .mailCountDown{
+        display: flex;
+        align-items: center;
+        margin-right: 10px;
+    }
 </style>
 <body>
     <div layout:fragment="content">
@@ -287,6 +292,7 @@
                                 </div>
                                 <div class="confirmMail mt-3">
                                     <div class="d-flex">
+                                        <span class="mailCountDown">1:00</span>
                                         <input type="text" class="input-text confirmKey font-weight-bold" placeholder="인증번호를 입력해주세요.">
                                         <button type="button" class="confirmBtn">인증</button>
                                     </div>
@@ -307,7 +313,7 @@
     // auth
     auth = [[${memberDTO}]];
     auth1 = [[${#authentication.principal}]];
-    console.log(auth1);
+
     // 아이디 별표처리
     const originalUsername = [[${memberDTO.memberId}]];
 
@@ -639,7 +645,7 @@
             document.querySelector('.nickModi').style.display = 'none';
             document.querySelector('.nickInfo').style.display = 'block';
             document.querySelector('.nickName').innerHTML = result;
-            console.log(auth1);
+
         })
     })
 
@@ -706,56 +712,96 @@
 
         // 인증 메일 보내기
         async function sendConfirmMail(mailTo) {
-            console.log("mailTo: ", mailTo);
+
             const request = await axios.get(`/mail/sendConfirmMail?mailTo=${mailTo}`);
             return request.data;
         }
 
+        // 인증 메일 삭제
+        async function removeConfirmKey() {
+            const request = await axios.get('/mail/removeConfirmKey');
+
+            return request.data;
+        }
+
+        let countDown =  document.querySelector('.mailCountDown');
         sendConfirmMail(emailInput.value).then(result => {
-            if (result === true){
+            if (result === true) {
                 alert('인증메일이 전송되었습니다.');
                 document.querySelector('.confirmMail').style.display = 'block';
+                // 메일 카운트다운
+                const countTime = 3 * 60; // 3분
+                startCountdown();
+
+                // 카운트다운 함수
+                function startCountdown() {
+                    let time = countTime;
+
+                    function updateCountdown() {
+                        const minutes = Math.floor(time / 60);
+                        const seconds = time % 60;
+
+                        // 시간 표시 형식 (분:초)
+                        countDown.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+
+                        if (time > 0) {
+                            time--;
+                        } else {
+                            clearInterval(intervalId);
+                            removeConfirmKey();
+                            countDown.textContent = '00:00';
+                        }
+                    }
+
+                    // 초기 업데이트 호출 및 1초마다 업데이트
+                    updateCountdown();
+                    const intervalId = setInterval(updateCountdown, 1000);
+                }
             } else {
                 alert('인증메일 전송 실패');
             }
         });
 
-        // 메일보내기 핸들러 제거
-        mailBtn.removeEventListener('click', mailBtnClickHandler);
 
         // 인증번호 확인하기
-        document.querySelector('.confirmBtn').addEventListener('click', function (){
+        const confirmBtn = document.querySelector('.confirmBtn');
+        confirmBtn.addEventListener('click', confirmMail);
+
+        function confirmMail() {
             const confirmKey = document.querySelector('.confirmKey');
 
             async function matchConfirmKey(confirmKey) {
-                console.log(confirmKey);
+
                 const request = await axios.post('/mail/matchConfirmKey', null, {
-                    params: { reqConfirmKey: confirmKey },
+                    params: {reqConfirmKey: confirmKey},
                     responseType: 'text'
                 });
                 return request.data;
             }
 
             matchConfirmKey(confirmKey.value).then(result => {
-                if (result){
+
+                if (result === 'true') {
+                    // 메일보내기 핸들러 제거
+                    mailBtn.removeEventListener('click', mailBtnClickHandler);
                     alert("인증이 완료되었습니다.");
-                    // 여기서 작업시작
                     document.querySelector('.confirmMail').style.display = 'none';
                     mailBtn.disabled = false;
                     mailBtn.style.backgroundColor = '#222';
                     mailBtn.innerHTML = '저장';
 
                     // 이메일수정 저장
-                    mailBtn.addEventListener('click', function (){
-                        async function modifyEmail(email, mno){
+                    mailBtn.addEventListener('click', function () {
+                        async function modifyEmail(email, mno) {
                             const data = {
-                                memberId:auth.memberId,
-                                email:email,
-                                mno:mno
+                                memberId: auth.memberId,
+                                email: email,
+                                mno: mno
                             }
                             const response = await axios.put(`/validation/email`, data);
                             return response.data;
                         }
+
                         modifyEmail(emailInput.value, auth.mno).then(result => {
                             document.querySelector('.emailModi').style.display = 'none';
                             document.querySelector('.emailInfo').style.display = 'block';
@@ -764,13 +810,53 @@
                     });
                 } else {
                     alert("인증 실패");
+                    // 실패했을때 다시보내는 거 해야지
+                    alert('인증메일이 재전송되었습니다.');
+                    sendConfirmMail(emailInput.value).then(result => {
+                        if (result === true) {
+
+                            document.querySelector('.confirmMail').style.display = 'block';
+                            // 메일 카운트다운
+
+                            const countTime = 3 * 60; // 3분
+
+                            startCountdown();
+
+                            // 카운트다운 함수
+                            function startCountdown() {
+                                let time = countTime;
+
+                                function updateCountdown() {
+                                    const minutes = Math.floor(time / 60);
+                                    const seconds = time % 60;
+
+                                    // 시간 표시 형식 (분:초)
+                                    countDown.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+
+                                    if (time > 0) {
+                                        time--;
+                                    } else {
+                                        clearInterval(intervalId);
+                                        removeConfirmKey();
+                                        countDown.textContent = '00:00';
+                                    }
+                                }
+
+                                // 초기 업데이트 호출 및 1초마다 업데이트
+                                updateCountdown();
+                                const intervalId = setInterval(updateCountdown, 1000);
+                            }
+                        } else {
+                            alert('인증메일 전송 실패');
+                        }
+                    });
                 }
             });
-        });
+        }
     }
-
     // 초기 클릭 이벤트 핸들러 등록
     mailBtn.addEventListener('click', mailBtnClickHandler);
+
 
     // 저장버튼 활성화
     function checkPass(target, pass){

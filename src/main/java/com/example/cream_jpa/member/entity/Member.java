@@ -27,6 +27,9 @@ public class Member {
 
     @Column(nullable = false)
     private String email; // 이메일
+    
+    @Column(nullable = false)
+    private String phone; // 전화번호
 
     @Column(columnDefinition = "VARCHAR(255) default 'user'")
     private String role = "user"; // 역할
@@ -38,6 +41,7 @@ public class Member {
         memberDTO.setPasswd(this.passwd);
         memberDTO.setNickname(this.nickname);
         memberDTO.setEmail(this.email);
+        memberDTO.setPhone(this.phone);
         memberDTO.setRole(this.role);
 
         return memberDTO;

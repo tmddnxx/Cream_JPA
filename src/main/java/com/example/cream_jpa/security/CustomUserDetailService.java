@@ -47,7 +47,7 @@ public class CustomUserDetailService implements UserDetailsService {
         // memberDTO에 저장해서 세션에 띄움 // view에서 사용가능함
         Member actualMember = member.get();
         return new MemberDTO(actualMember.getMno(), actualMember.getMemberId(), actualMember.getPasswd(),
-                actualMember.getNickname(), actualMember.getEmail(), actualMember.getRole(), authorities);
+                actualMember.getNickname(), actualMember.getEmail(), actualMember.getPhone(), actualMember.getRole(), authorities);
 
     }
 

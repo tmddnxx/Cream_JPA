@@ -23,6 +23,10 @@
         border: none;
         outline: none;
     }
+    .input-error{
+        color: #f15746;
+        font-size: 13px;
+    }
     .input-box{
         padding: 10px 0 14px;
     }
@@ -90,6 +94,12 @@
         align-items: center;
         gap: 100px;
     }
+    .disabled{
+        background-color: #ebebeb;
+    }
+    .solid{
+        background-color: #222222;
+    }
 </style>
 <body>
     <div layout:fragment="content">
@@ -99,13 +109,15 @@
                 <div class="input-box">
                     <h6 class="input-title">아이디</h6>
                     <input class="input-login" type="text" id="memberId" name="username" placeholder="Cream" autocomplete="off">
+                    <p class="input-error"></p>
                 </div>
                 <div class="input-box">
                     <h6 class="input-title">비밀번호</h6>
                     <input class="input-login" type="password" id="passwd" name="password" maxlength="16" autocomplete="off">
+                    <p class="input-error"></p>
                 </div>
                 <div class="btnBox">
-                    <button type="submit" class="loginBtn">로그인</button>
+                    <button type="submit" class="loginBtn disabled" disabled>로그인</button>
                 </div>
             </form>
             <ul class="look_box">
@@ -115,7 +127,7 @@
             </ul>
             <div class="social_login">
                 <a href="/oauth2/authorization/kakao" class="social_btn"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Kakao_CI_yellow.svg/1200px-Kakao_CI_yellow.svg.png" alt="카카오로그인" width="42px" height="20px">카카오로 로그인</a>
-                <a href="#" class="social_btn"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Google_2015_logo.svg/2560px-Google_2015_logo.svg.png" alt="구글" width="42px" height="20px">Google로 로그인</a>
+                <a href="#" class="social_btn"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Google_2015_logo.svg/2560px-Google_2015_logo.svg.png" alt="구글" width="42px" height="20px">Google로 로그인 (기능 추가 예정)</a>
             </div>
         </div>
     </div>
@@ -126,5 +138,158 @@
     if (failLogin !== null){
         alert(failLogin);
     }
+
+    // 유효성검사
+    let passId;
+    let passPw;
+
+    // 아이디 유효성 검사
+    const idInput = document.getElementById('memberId');
+    idInput.addEventListener('blur', validateId);
+    idInput.addEventListener('keyup', validateId);
+    function validateId(){
+        const memberId = idInput.value;
+        const errorMsg = idInput.parentNode.querySelector('.input-error');
+        const label = idInput.parentNode.querySelector('.input-title');
+
+        // 공백 검사
+        if (/\s/.test(memberId)) {
+            errorMsg.innerText = '공백을 포함할 수 없습니다.';
+            label.style.color = '#f15746';
+            idInput.style.borderBottomColor = '#ef6253';
+            passId = false;
+            allPassCheck();
+            return;
+        }else {
+            errorMsg.innerText = '';
+            label.style.color = 'black';
+            idInput.style.borderBottomColor = '';
+            passId = true;
+            allPassCheck();
+        }
+
+        // 아이디 길이 검사
+        if (memberId.length < 5){
+            errorMsg.innerText = '아이디는 최소 5자 이상이어야 합니다.';
+            label.style.color = '#f15746';
+            idInput.style.borderBottomColor = '#ef6253';
+            passId = false;
+            allPassCheck();
+            return;
+        }else {
+            errorMsg.innerText = '';
+            label.style.color = 'black';
+            idInput.style.borderBottomColor = '';
+            passId = true;
+            allPassCheck();
+        }
+        // 문자열 검사
+        const regex = /^[a-zA-Z0-9@.]+$/;
+        if (!regex.test(memberId)){
+            errorMsg.innerText = '아이디는 영어, 숫자, 이메일만 허용합니다';
+            label.style.color = '#f15746';
+            idInput.style.borderBottomColor = '#ef6253';
+            passId = false;
+            allPassCheck();
+            return;
+        }else{
+            errorMsg.innerText = '';
+            label.style.color = 'black';
+            idInput.style.borderBottomColor = '';
+            passId = true;
+            allPassCheck();
+        }
+    }
+
+    // 비밀번호 유효성 검사
+    const pwInput = document.getElementById('passwd');
+    pwInput.addEventListener('blur', validatePw);
+    pwInput.addEventListener('keyup', validatePw);
+    function validatePw(){
+        const passwd = pwInput.value;
+        const errorMsg = pwInput.parentNode.querySelector('.input-error');
+        const label = pwInput.parentNode.querySelector('.input-title');
+
+        // 공백 검사
+        if (/\s/.test(passwd)) {
+            errorMsg.innerText = '공백을 포함할 수 없습니다.';
+            label.style.color = '#f15746';
+            pwInput.style.borderBottomColor = '#ef6253';
+            passPw = false;
+            allPassCheck();
+            return;
+        }else{
+            errorMsg.innerText = '';
+            label.style.color = 'black';
+            pwInput.style.borderBottomColor = '';
+            passPw = true;
+            allPassCheck();
+        }
+
+        // 길이 검사
+        if (passwd.length < 8 || passwd.length >16){
+            errorMsg.innerText = '비밀번호는 8자 이상 16자 이하이어야 합니다.';
+            label.style.color = '#f15746';
+            pwInput.style.borderBottomColor = '#ef6253';
+            passPw = false;
+            allPassCheck();
+            return;
+        }else{
+            errorMsg.innerText = '';
+            label.style.color = 'black';
+            pwInput.style.borderBottomColor = '';
+            passPw = true;
+            allPassCheck();
+        }
+
+        // 한글 x 검사
+        if (/[\uac00-\ud7a3]/.test(passwd)) {
+            errorMsg.innerText = "비밀번호에 한글을 사용할 수 없습니다.";
+            label.style.color = '#f15746';
+            pwInput.style.borderBottomColor = '#ef6253';
+            passPw = false;
+            allPassCheck();
+            return;
+        }else {
+            errorMsg.innerText = '';
+            label.style.color = 'black';
+            pwInput.style.borderBottomColor = '';
+            passPw = true;
+            allPassCheck();
+        }
+
+        // 문자열 검사
+        const regex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]+$/;
+        if (!regex.test(passwd)){
+            errorMsg.innerText = '비밀번호는 영문, 숫자, 특수문자를 모두 포함해야 합니다.';
+            label.style.color = '#f15746';
+            pwInput.style.borderBottomColor = '#ef6253';
+            passPw = false;
+            allPassCheck();
+            return;
+        }else {
+            errorMsg.innerText = '';
+            label.style.color = 'black';
+            pwInput.style.borderBottomColor = '';
+            passPw = true;
+            allPassCheck();
+        }
+    }
+
+    const loginBtn = document.querySelector('.loginBtn');
+    // 전체 검사 통과 체크
+    function allPassCheck(){
+        const allPass = passId && passPw
+        if (allPass){
+            loginBtn.disabled = false;
+            loginBtn.classList.add('solid');
+            loginBtn.classList.remove('disabled');
+        }else{
+            loginBtn.disabled = true;
+            loginBtn.classList.add('disabled');
+            loginBtn.classList.remove('solid');
+        }
+    }
+
 </script>
 </html>

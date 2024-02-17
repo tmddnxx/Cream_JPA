@@ -29,7 +29,10 @@ public class MailController {
     public boolean matchConfirmKey(@RequestParam("reqConfirmKey") String reqConfirmKey, HttpSession session) {
         // 이메일 인증코드 확인
         log.info("/matchConfirmKey(POST)...");
+        log.info(reqConfirmKey);
         String confirmKey = (String) session.getAttribute("confirmKey");
+        log.info(confirmKey);
+
         return reqConfirmKey.equals(confirmKey);
     }
 

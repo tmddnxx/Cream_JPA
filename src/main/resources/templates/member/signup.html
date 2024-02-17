@@ -177,6 +177,25 @@
         letter-spacing: -.2px;
         line-height: 22px;
     }
+    .sendSMS{
+        margin-top: 5px;
+        border-radius: 5px;
+        background-color: #eeeeee;
+        border: 1px solid black;
+    }
+    .confirmSMSBox{
+        display: none;
+        margin-top: 5px;
+    }
+    .confirmSMS{
+        height: 35px;
+        width: 90px;
+        font-weight: 700;
+        color: white;
+        border-radius: 5px;
+        background-color: #323137;
+        border: 1px solid black;
+    }
 </style>
 <body>
     <div layout:fragment="content">
@@ -203,6 +222,18 @@
                     <h6 class="input-title labelEmail">이메일</h6>
                     <input class="input-login" id="email" type="email" name="email" placeholder="예) cream@cream.co.kr" autocomplete="off" required>
                     <p class="errorMsg emailErrorMsg"></p>
+                </div>
+                <div class="input-box">
+                    <h6 class="input-title labelPhone">전화번호</h6>
+                    <input class="input-login" id="phone" type="text" name="phone" placeholder="-제외하고 입력해주세요" autocomplete="off" oninput="handleNumericInput(this)" required>
+                    <p class="errorMsg phoneErrorMsg"></p>
+                    <button type="button" class="sendSMS">인증문자 보내기</button>
+                    <div class="confirmSMSBox">
+                        <div class="d-flex align-items-center">
+                            <input class="input-login confirmCode" type="text" placeholder="인증코드" autocomplete="off" oninput="handleNumericInput(this)">
+                            <button type="button" class="confirmSMS">인증</button>
+                        </div>
+                    </div>
                 </div>
             </form>
             <div class="signUp_terms">
@@ -551,6 +582,7 @@
     let passNick = false;
     let passEmail = false;
     let passCheck = false;
+    let passPhone = false;
 
     // 아이디 유효성검사
     idInput.addEventListener('blur', validateMemberId);
@@ -819,6 +851,53 @@
 
     }
 
+    //전화번호 유효성검사
+        // 숫자만 입력하게
+    function handleNumericInput(input) {
+        // 숫자 이외의 문자 제거
+        let cleanedValue = input.value.replace(/[^0-9]/g, '');
+
+        // 변환된 숫자를 다시 입력란에 설정
+        input.value = cleanedValue;
+    }
+    const sendSMSBtn = document.querySelector('.sendSMS');
+    sendSMSBtn.addEventListener('click', function (){
+        const phoneInput = document.getElementById('phone');
+        const confirmSMSBox = document.querySelector('.confirmSMSBox');
+        async function sendSMS(toPhone){
+            const response = await axios.post(`/sms/sendOne`, null, {
+                params: {
+                    toPhone:toPhone
+                }
+            });
+            return response.data;
+        }
+        sendSMS(phoneInput.value).then(result =>{
+            if (result != null){
+                alert('인증번호가 전송되었습니다.')
+                sendSMSBtn.style.display = 'none';
+                confirmSMSBox.style.display = 'block';
+
+                const code = document.querySelector('.confirmCode');
+                const confirmBtn = document.querySelector('.confirmSMS');
+                confirmBtn.addEventListener('click', function (){
+                    if (code.value == result){
+                        alert('인증되었습니다.');
+                        confirmSMSBox.style.display = 'none';
+                        phoneInput.readOnly = true;
+                        passPhone = true;
+                    }else {
+                        alert('인증번호가 일치하지 않습니다.');
+                        passPhone = false;
+                    }
+                })
+            }else{
+                alert('전송 실패');
+            }
+
+        })
+    })
+
     // 체크박스 열고닫기
     const plusBtns = document.querySelectorAll('.plusBtn');
     plusBtns.forEach(plusBtn => {
@@ -913,7 +992,7 @@
 
     // 전체 검사 통과 체크
     function allPassCheck(){
-        const allPass = passId && passPw && passNick && passEmail && passCheck;
+        const allPass = passId && passPw && passNick && passEmail && passPhone && passCheck;
         if (allPass){
             signUpBtn.disabled = false;
             signUpBtn.classList.add('solid');
