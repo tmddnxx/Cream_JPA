@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{inc/layout.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>Find Pw</title>
+</head>
+<style layout:fragment="style">
+    .wrap{
+        padding-top: 30px;
+        min-height: 600px;
+        width: 30%;
+        margin: 0 auto;
+    }
+    .find-title{
+        border-bottom: 2px solid #000;
+        color: #000;
+        font-size: 32px;
+        letter-spacing: -.48px;
+        padding-bottom: 41px;
+        text-align: center;
+    }
+    .notice{
+        padding: 40px 0 30px;
+        font-size: 12px;
+        letter-spacing: -.21px;
+    }
+    .input-box{
+        padding: 10px 0 14px
+    }
+    .input-title{
+        font-weight: 900;
+        font-size: 14px;
+        position: relative;
+        padding-right: 6px;
+    }
+    input{
+        height: 38px;
+        font-size: 15px;
+        letter-spacing: -.15px;
+        line-height: 22px;
+        width: 100%;
+        padding: 8px 0;
+        background-color: transparent !important;
+        border: none;
+        outline: none;
+    }
+    .input-login{
+        border-bottom: 1px solid #ebebeb;
+    }
+    .input-login:focus{
+        border-bottom: 2px solid black;
+    }
+    .btn_box{
+        padding-top: 44px;
+    }
+    .findBtn{
+        border-radius: 12px;
+        border: none;
+        font-weight: 700;
+        font-size: 16px;
+        width: 100%;
+        height: 52px;
+        letter-spacing: -.16px;
+        color: #fff;
+    }
+    .disabled{
+        background-color: #ebebeb;
+    }
+    .solid{
+        background-color: #222222;
+    }
+    .input-error{
+        color: #f15746;
+        font-size: 13px;
+    }
+</style>
+<body>
+<div layout:fragment="content">
+    <div class="wrap">
+        <h2 class="find-title">비밀번호 찾기</h2>
+        <p class="notice">
+            가입 시 등록한 휴대폰 번호와 아이디를 입력하시면,
+            <br>
+            휴대폰으로 임시 비밀번호를 전송해 드립니다.
+        </p>
+        <div class="input-box">
+            <h6 class="input-title labelPhone">전화번호</h6>
+            <input class="input-login" id="phone" type="text" name="phone" placeholder="-제외하고 입력해주세요" autocomplete="off" oninput="handleNumericInput(this)" required>
+        </div>
+        <div class="input-box">
+            <h6 class="input-title labelMemberId">아이디</h6>
+            <input class="input-login" id="memberId" type="text" name="memberId" placeholder="cream, cream@cream.com" autocomplete="off" required>
+            <p class="input-error"></p>
+        </div>
+        <div class="btn_box">
+            <button type="button" class="findBtn disabled" disabled>비밀번호 찾기</button>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</div>
+</body>
+<script layout:fragment="script" th:inline="javascript">
+
+    const findBtn = document.querySelector('.findBtn');
+    let phoneCheck = false;
+    let idCheck = false;
+
+    // 전화번호 유효성검사
+    const phoneInput = document.getElementById('phone');
+    phoneInput.addEventListener('blur', validatePhone);
+    phoneInput.addEventListener('keyup', validatePhone);
+    function validatePhone(){
+        const phone = phoneInput.value;
+        if (phone.length > 10 && phone.length <14){
+            phoneCheck = true;
+            allPass();
+        }else{
+            phoneCheck = false;
+            allPass();
+        }
+    }
+
+    // 아이디 유효성 검사
+    const idInput = document.getElementById('memberId');
+    idInput.addEventListener('blur', validateId);
+    idInput.addEventListener('keyup', validateId);
+    function validateId(){
+        const memberId = idInput.value;
+        const errorMsg = document.querySelector('.input-error');
+        const label = document.querySelector('.labelMemberId');
+
+        // 공백 검사
+        if (/\s/.test(memberId)) {
+            errorMsg.innerText = '공백을 포함할 수 없습니다.';
+            label.style.color = '#f15746';
+            idInput.style.borderBottomColor = '#ef6253';
+            idCheck = false;
+            allPass();
+            return;
+        }else {
+            errorMsg.innerText = '';
+            label.style.color = 'black';
+            idInput.style.borderBottomColor = '';
+            idCheck = true;
+            allPass();
+        }
+
+        // 아이디 길이 검사
+        if (memberId.length < 5){
+            errorMsg.innerText = '아이디는 최소 5자 이상이어야 합니다.';
+            label.style.color = '#f15746';
+            idInput.style.borderBottomColor = '#ef6253';
+            idCheck = false;
+            allPass();
+            return;
+        }else {
+            errorMsg.innerText = '';
+            label.style.color = 'black';
+            idInput.style.borderBottomColor = '';
+            idCheck = true;
+            allPass();
+        }
+
+        // 문자열 검사
+        const regex = /^[a-zA-Z0-9@.]+$/;
+        if (!regex.test(memberId)){
+            errorMsg.innerText = '아이디는 영어, 숫자, 이메일만 허용합니다';
+            label.style.color = '#f15746';
+            idInput.style.borderBottomColor = '#ef6253';
+            idCheck = false;
+            allPass();
+            return;
+        }else{
+            errorMsg.innerText = '';
+            label.style.color = 'black';
+            idInput.style.borderBottomColor = '';
+            idCheck = true;
+            allPass();
+        }
+    }
+
+    // 버튼 활성화
+    function allPass(){
+        const allPassCheck = phoneCheck && idCheck;
+
+        if (allPassCheck){
+            findBtn.disabled = false;
+            findBtn.classList.add('solid');
+            findBtn.classList.remove('disabled');
+        } else{
+            findBtn.disabled = true;
+            findBtn.classList.remove('solid');
+            findBtn.classList.add('disabled');
+        }
+    }
+    //숫자만 입력
+    function handleNumericInput(input) {
+        // 숫자 이외의 문자 제거
+        let cleanedValue = input.value.replace(/[^0-9]/g, '');
+
+        // 변환된 숫자를 다시 입력란에 설정
+        input.value = cleanedValue;
+    }
+
+    findBtn.addEventListener('click', function (){
+        findPw(phoneInput.value, idInput.value).then(result =>{
+            if (result === true){
+                alert('휴대폰으로 임시비밀번호가 발송되었습니다.');
+                findBtn.disabled = true;
+                sendPw(phoneInput.value).then(result => {
+                    window.location.href = `/login`;
+                })
+            }else{
+                alert('일치하는 정보가 없습니다.')
+                phoneInput.value = '';
+                idInput.value = '';
+            }
+        })
+    })
+
+    // 비밀번호찾기 axios
+    async function findPw(phone, memberId){
+        const data = {
+            memberId:memberId,
+            phone:phone
+        }
+        const response = await axios.post(`/validation/findPw`,data);
+
+        return response.data;
+    }
+    // 임시비밀번호 발송
+    async function sendPw(toPhone){
+        const response = await axios.post(`/sms/sendPasswd`, null, {
+            params:{
+                toPhone:toPhone
+            }
+        })
+        return response.data;
+    }
+</script>
+</html>

@@ -1,33 +1,23 @@
 package com.example.cream_jpa.member.service;
 
-import com.example.cream_jpa.kream.dto.MyProductDTO;
-import com.example.cream_jpa.kream.dto.ProductDTO;
-import com.example.cream_jpa.kream.entity.Product;
-import com.example.cream_jpa.kream.repository.ProductRepository;
-import com.example.cream_jpa.kream.repository.PurchaseBidRepository;
-import com.example.cream_jpa.kream.repository.SalesBidRepository;
+import com.example.cream_jpa.cream.dto.MyProductDTO;
+import com.example.cream_jpa.cream.repository.ProductRepository;
+import com.example.cream_jpa.cream.repository.PurchaseBidRepository;
+import com.example.cream_jpa.cream.repository.SalesBidRepository;
 import com.example.cream_jpa.member.dto.MemberDTO;
 import com.example.cream_jpa.member.entity.Member;
 import com.example.cream_jpa.member.repository.MemberRepository;
 import com.example.cream_jpa.myPage.dto.MySearchDTO;
 import com.example.cream_jpa.security.CustomUserDetailService;
-import com.querydsl.core.Tuple;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.cglib.core.Local;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -68,6 +58,22 @@ public class MemberServiceImpl implements MemberService{
         MemberDTO memberDTO;
         memberDTO = member.map(Member::toDTO).orElse(null);
 
+        return memberDTO;
+    }
+
+    @Override
+    public MemberDTO findByPhone(String phone) { // 아이디찾기
+        Optional<Member> member = memberRepository.findByPhone(phone);
+        MemberDTO memberDTO;
+        memberDTO = member.map(Member::toDTO).orElse(null);
+        return memberDTO;
+    }
+
+    @Override // 비밀번호 찾기
+    public MemberDTO findPw(String memberId, String phone) {
+        Optional<Member> member = memberRepository.findMemberByMemberIdAndPhone(memberId, phone);
+        MemberDTO memberDTO;
+        memberDTO = member.map(Member::toDTO).orElse(null);
         return memberDTO;
     }
 

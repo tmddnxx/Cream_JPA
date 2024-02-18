@@ -1,9 +1,7 @@
 package com.example.cream_jpa.myPage.controller;
 
-import com.example.cream_jpa.kream.dto.MyProductDTO;
-import com.example.cream_jpa.kream.dto.ProductDTO;
+import com.example.cream_jpa.cream.dto.MyProductDTO;
 import com.example.cream_jpa.member.dto.MemberDTO;
-import com.example.cream_jpa.member.entity.Member;
 import com.example.cream_jpa.member.service.MemberService;
 import com.example.cream_jpa.myPage.dto.MySearchDTO;
 import jakarta.servlet.http.HttpSession;
@@ -11,17 +9,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor

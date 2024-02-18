@@ -89,6 +89,18 @@ public class signUpController {
         return memberDTO.getEmail();
     }
 
+    @PostMapping("/findPw") // 비밀번호 찾기(회원찾기)
+    public boolean findPw(@RequestBody MemberDTO memberDTO){
+        MemberDTO findMember = memberService.findPw(memberDTO.getMemberId(), memberDTO.getPhone());
+
+        if (findMember != null){
+            // 문자로 임시비밀번호 보냄
+            return true;
+        }else{
+            return false;
+        }
+    }
+
     private void sessionUpdate(MemberDTO memberDTO){ // 세션업데이트
         // 변경된 회원정보
         UserDetails userDetails = customUserDetailService.loadUserByUsername(memberDTO.getMemberId());
