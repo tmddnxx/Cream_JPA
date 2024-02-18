@@ -1,18 +1,16 @@
 package com.example.cream_jpa.queryDSL;
 
 import com.example.cream_jpa.config.QueryDSLConfig;
-import com.example.cream_jpa.kream.entity.Product;
-import com.example.cream_jpa.kream.entity.QProduct;
+import com.example.cream_jpa.cream.entity.Product;
+import com.example.cream_jpa.cream.entity.QProduct;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
