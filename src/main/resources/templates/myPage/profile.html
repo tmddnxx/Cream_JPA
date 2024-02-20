@@ -724,39 +724,49 @@
             return request.data;
         }
 
+        let stopCount = false;
+        // 카운트다운 함수
+        function startCountdown() {
+            if (stopCount){
+                return;
+            }
+            const countTime = 3 * 60; // 3분
+            let time = countTime;
+
+            function updateCountdown() {
+                const minutes = Math.floor(time / 60);
+                const seconds = time % 60;
+
+                // 시간 표시 형식 (분:초)
+                countDown.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+
+                if (time > 0) {
+                    time--;
+                } else {
+                    clearInterval(intervalId);
+                    removeConfirmKey();
+                    countDown.textContent = '00:00';
+                }
+            }
+
+
+            // 초기 업데이트 호출 및 1초마다 업데이트
+            updateCountdown();
+            const intervalId = setInterval(updateCountdown, 1000);
+
+
+        }
+
         let countDown =  document.querySelector('.mailCountDown');
         sendConfirmMail(emailInput.value).then(result => {
             if (result === true) {
                 alert('인증메일이 전송되었습니다.');
                 document.querySelector('.confirmMail').style.display = 'block';
                 // 메일 카운트다운
-                const countTime = 3 * 60; // 3분
+                stopCount = false;
                 startCountdown();
 
-                // 카운트다운 함수
-                function startCountdown() {
-                    let time = countTime;
 
-                    function updateCountdown() {
-                        const minutes = Math.floor(time / 60);
-                        const seconds = time % 60;
-
-                        // 시간 표시 형식 (분:초)
-                        countDown.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-
-                        if (time > 0) {
-                            time--;
-                        } else {
-                            clearInterval(intervalId);
-                            removeConfirmKey();
-                            countDown.textContent = '00:00';
-                        }
-                    }
-
-                    // 초기 업데이트 호출 및 1초마다 업데이트
-                    updateCountdown();
-                    const intervalId = setInterval(updateCountdown, 1000);
-                }
             } else {
                 alert('인증메일 전송 실패');
             }
@@ -811,43 +821,20 @@
                 } else {
                     alert("인증 실패");
                     // 실패했을때 다시보내는 거 해야지
+                    stopCount = true;
+                    startCountdown();
                     alert('인증메일이 재전송되었습니다.');
+
                     sendConfirmMail(emailInput.value).then(result => {
                         if (result === true) {
 
                             document.querySelector('.confirmMail').style.display = 'block';
                             // 메일 카운트다운
-
-                            const countTime = 3 * 60; // 3분
-
+                            stopCount = false;
                             startCountdown();
 
-                            // 카운트다운 함수
-                            function startCountdown() {
-                                let time = countTime;
-
-                                function updateCountdown() {
-                                    const minutes = Math.floor(time / 60);
-                                    const seconds = time % 60;
-
-                                    // 시간 표시 형식 (분:초)
-                                    countDown.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-
-                                    if (time > 0) {
-                                        time--;
-                                    } else {
-                                        clearInterval(intervalId);
-                                        removeConfirmKey();
-                                        countDown.textContent = '00:00';
-                                    }
-                                }
-
-                                // 초기 업데이트 호출 및 1초마다 업데이트
-                                updateCountdown();
-                                const intervalId = setInterval(updateCountdown, 1000);
-                            }
                         } else {
-                            alert('인증메일 전송 실패');
+                            alert('인증 실패');
                         }
                     });
                 }

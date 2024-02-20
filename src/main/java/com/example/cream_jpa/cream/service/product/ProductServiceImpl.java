@@ -75,7 +75,7 @@ public class ProductServiceImpl implements ProductService{
 
         Page<Product> productPage;
         // 실제로 데이터베이스에서 페이징 및 정렬된 데이터를 조회합니다.
-        if(keyword != null){
+        if(keyword != "" && keyword != null){
             productPage = productRepository.PRODUCT_PAGE(keyword, pageable);
             log.info(" 검색 토탈 페이지 "+productPage.getTotalElements());
         }else {
